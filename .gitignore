@@ -1,0 +1,11 @@
+# Node Modules
+node_modules/
+
+# Yarn
+yarn.lock
+
+# Output
+dist/
+
+# Config
+src/config/
