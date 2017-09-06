@@ -8,6 +8,46 @@
 
 	.waiting-info {
 		flex: 1;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+
+		.waiting-icon {
+			margin-top: -5px;
+
+			i {
+				font-size: 96px;
+			}
+		}
+
+		.waiting-text {
+			font-size: 1.4rem;
+		}
+
+		.waiting-loading-container {
+			position: relative;
+			width: 280px;
+			height: 280px;
+			margin: 0 auto;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+
+			.circular-loader {
+				position: absolute;
+				top: 0;
+				left: 0;
+				animation: loaderRotate 2s linear infinite;
+				transform-origin: center center;
+			}
+
+			.loader-path {
+				stroke-dasharray: 150, 280;
+				stroke-dashoffset: -10;
+				stroke-linecap: round;
+				animation: dash 1.5s ease-in-out infinite;
+			}
+		}
 	}
 
 	.start-scan {
@@ -28,5 +68,27 @@
 				background-color: $norm-text;
 			}
 		}
+	}
+}
+
+@keyframes loaderRotate {
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes loaderDash {
+	0% {
+		stroke-dasharray: 1, 280;
+		stroke-dashoffset: 0;
+	}
+	50% {
+		stroke-dasharray: 89, 280;
+		stroke-dashoffset: -35;
+	}
+
+	100% {
+		stroke-dasharray: 89, 280;
+		stroke-dashoffset: -124;
 	}
 }
