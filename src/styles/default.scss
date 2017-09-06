@@ -43,5 +43,14 @@ body {
 .app {
 	height: 100vh;
 	position: relative;
-	background-color: #fff;
+	background-image: url("../static/bg.jpg");
+	background-size: 100%;
+	background-repeat: no-repeat;
+	color: $norm-text;
+	display: flex;
+	flex-direction: column;
+}
+
+.hidden {
+	visibility: hidden;
 }

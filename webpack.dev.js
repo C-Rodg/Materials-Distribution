@@ -25,7 +25,7 @@ module.exports = {
 				loader: "babel-loader",
 				exclude: /node_modules/,
 				options: {
-					presets: ["stage-0", "es2015", "react"]
+					presets: ["react", "es2015", "stage-0"]
 				}
 			},
 			{
@@ -99,7 +99,7 @@ module.exports = {
 		new HtmlWebpackPlugin({
 			title: "Materials Distribution",
 			template: "src/index.html",
-			filename: "./Launch.html",
+			filename: "./index.html",
 			chunks: ["vendor", "app"],
 			favicon: "./src/static/favicon.ico"
 		}),
