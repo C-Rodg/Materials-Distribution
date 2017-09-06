@@ -10,6 +10,13 @@ a:hover {
 	text-decoration: none;
 }
 
+button {
+	user-select: none;
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+}
+
 * {
 	box-sizing: border-box;
 }
@@ -26,14 +33,20 @@ button:active {
 	outline: 0;
 }
 
+input,
+button {
+	font-family: $regular-font;
+}
+
 // Styles
 html,
 body {
 	font-size: 16px;
 	font-family: $regular-font;
+	font-weight: 400;
 	margin: 0;
 	padding: 0;
-	color: #333;
+	color: $norm-text;
 }
 
 #container {
@@ -51,6 +64,16 @@ body {
 	flex-direction: column;
 }
 
+.main {
+	flex: 1;
+	padding: 15px 10px;
+	display: flex;
+}
+
 .hidden {
 	visibility: hidden;
+}
+
+.action-btn {
+	text-transform: uppercase;
 }
