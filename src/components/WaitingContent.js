@@ -10,17 +10,7 @@ const WaitingContent = ({ onStartScan, onStopScan }) => {
 						<i className="material-icons">hourglass_empty</i>
 					</div>
 					<div className="waiting-text">Waiting for Scan...</div>
-					<svg className="circular-loader" viewBox="25 25 50 50">
-						<circle
-							className="loader-path"
-							cx="50"
-							cy="50"
-							r="24"
-							fill="none"
-							stroke="#FFFFFF"
-							strokeWidth="1"
-						/>
-					</svg>
+					<span className="loading-effect" />
 				</div>
 			</div>
 			<div className="start-scan">

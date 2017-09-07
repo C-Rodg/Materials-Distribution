@@ -33,19 +33,40 @@
 			flex-direction: column;
 			justify-content: center;
 
-			.circular-loader {
+			.loading-effect {
+				display: block;
 				position: absolute;
 				top: 0;
 				left: 0;
-				animation: loaderRotate 2s linear infinite;
-				transform-origin: center center;
-			}
+				bottom: 0;
+				right: 0;
+				margin: auto;
+				height: 200px;
+				width: 200px;
 
-			.loader-path {
-				stroke-dasharray: 150, 280;
-				stroke-dashoffset: -10;
-				stroke-linecap: round;
-				animation: dash 1.5s ease-in-out infinite;
+				&::before,
+				&::after {
+					content: "";
+					display: block;
+					position: absolute;
+					top: 0;
+					left: 0;
+					bottom: 0;
+					right: 0;
+					margin: auto;
+					width: 200px;
+					height: 200px;
+					border: 2px solid $norm-text;
+					border-radius: 50%;
+					opacity: 0;
+					animation: loaderPulse1 2.4s cubic-bezier(0.075, 0.82, 0.165, 1)
+						infinite;
+				}
+
+				&::after {
+					animation: loaderPulse2 2.4s cubic-bezier(0.075, 0.82, 0.165, 1) 0.4s
+						infinite;
+				}
 			}
 		}
 	}
@@ -71,24 +92,24 @@
 	}
 }
 
-@keyframes loaderRotate {
+@keyframes loaderPulse1 {
+	0% {
+		transform: translate3d(0, 0, 0) scale(0.5);
+		opacity: 0.7;
+	}
 	100% {
-		transform: rotate(360deg);
+		transform: translate3d(0, 0, 0) scale(1.5);
+		opacity: 0;
 	}
 }
 
-@keyframes loaderDash {
+@keyframes loaderPulse2 {
 	0% {
-		stroke-dasharray: 1, 280;
-		stroke-dashoffset: 0;
+		transform: translate3d(0, 0, 0) scale(0.5);
+		opacity: 0.4;
 	}
-	50% {
-		stroke-dasharray: 89, 280;
-		stroke-dashoffset: -35;
-	}
-
 	100% {
-		stroke-dasharray: 89, 280;
-		stroke-dashoffset: -124;
+		transform: translate3d(0, 0, 0) scale(1);
+		opacity: 0;
 	}
 }
