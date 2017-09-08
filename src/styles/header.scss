@@ -13,6 +13,7 @@
 
 	.header-back {
 		cursor: pointer;
+		user-select: none;
 		padding: 10px 8px 6px 8px;
 		z-index: 3;
 		i {

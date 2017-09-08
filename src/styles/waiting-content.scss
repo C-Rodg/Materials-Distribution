@@ -13,10 +13,17 @@
 		justify-content: center;
 
 		.waiting-icon {
+			transform: rotate(0);
+			transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
 			margin-top: -5px;
 
 			i {
 				font-size: 96px;
+			}
+
+			&.icon-hide {
+				transform: rotate(180deg);
 			}
 		}
 
@@ -73,6 +80,8 @@
 
 	.start-scan {
 		button {
+			user-select: none;
+			opacity: 1;
 			color: $norm-text;
 			font-size: 1.7rem;
 			letter-spacing: 0.08em;
@@ -87,6 +96,11 @@
 			&:active {
 				color: #4ca899;
 				background-color: $norm-text;
+			}
+
+			&.fade-out {
+				opacity: 0;
+				visibility: hidden;
 			}
 		}
 	}

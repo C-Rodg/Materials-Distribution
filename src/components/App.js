@@ -9,21 +9,36 @@ class App extends Component {
 		super(props);
 
 		this.state = {
-			registrant: {},
+			registrant: null,
 			isLoading: false
 		};
 	}
 
+	componentDidMount() {
+		// Attach window.OnDataRead, etc...
+	}
+
+	// Scan Read
+	onScanRead = data => {
+		this.setState({ isLoading: true });
+	};
+
 	// Back button clicked
 	handleGoBack = () => {
 		this.setState({
-			registrant: null
+			registrant: null,
+			isLoading: false
 		});
 	};
 
 	// Scan button pressed
 	handleStartScan = () => {
 		console.log("STARTING SCAN");
+		this.setState({ isLoading: true });
+		setTimeout(() => {
+			this.setState({ registrant: {} });
+		}, 2500);
+		//this.setState({ registrant: {} });
 	};
 
 	// Scan button released
@@ -45,6 +60,7 @@ class App extends Component {
 						<WaitingContent
 							onStartScan={this.handleStartScan}
 							onStopScan={this.handleStopScan}
+							isLoading={this.state.isLoading}
 						/>
 					)}
 				</main>
