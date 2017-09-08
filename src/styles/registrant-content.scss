@@ -11,9 +11,20 @@
 		flex: 1;
 
 		.card {
-			width: 95%;
-			height: 250px;
-			background-color: $norm-text;
+			max-width: 400px;
+			min-height: 250px;
+			margin: 0 auto;
+			background-color: #f4f4f4;
+			border-radius: 10px;
+			color: $med-dark-text;
+			text-align: left;
+			padding: 10px;
+
+			.title {
+				color: $dark-text;
+				font-size: 1.5rem;
+				font-weight: 500;
+			}
 		}
 	}
 }

@@ -40,7 +40,7 @@ class App extends Component {
 		this.setState({ isLoading: true });
 		setTimeout(() => {
 			this.setState({ registrant: {} });
-		}, 2500);
+		}, 1500);
 		//this.setState({ registrant: {} });
 	};
 
