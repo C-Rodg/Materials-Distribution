@@ -80,7 +80,9 @@
 
 	.start-scan {
 		button {
+			cursor: pointer;
 			user-select: none;
+			-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 			opacity: 1;
 			color: $norm-text;
 			font-size: 1.7rem;
