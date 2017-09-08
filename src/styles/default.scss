@@ -76,4 +76,29 @@ body {
 
 .action-btn {
 	text-transform: uppercase;
+	cursor: pointer;
+	user-select: none;
+	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+	opacity: 1;
+	color: $norm-text;
+	font-size: 1.7rem;
+	letter-spacing: 0.08em;
+	border-radius: 30px;
+	padding: 10px 50px;
+	border: 2px solid $norm-text;
+	font-weight: 300;
+	background-color: #55ae9a;
+	background-color: rgba(255, 255, 255, 0.1);
+	transition: all 0.2s ease;
+
+	&:hover,
+	&:active {
+		color: #4ca899;
+		background-color: $norm-text;
+	}
+
+	&.fade-out {
+		opacity: 0;
+		visibility: hidden;
+	}
 }

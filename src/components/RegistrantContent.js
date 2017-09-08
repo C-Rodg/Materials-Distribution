@@ -1,12 +1,18 @@
 import React from "react";
 
-const RegistrantContent = () => {
+import "../styles/registrant-content.scss";
+
+const RegistrantContent = ({ registrant, onSaveRegistrant }) => {
 	return (
 		<div className="registrant-content">
 			<div className="registrant-info">
-				Registrant Info and checkboxes, etc.
+				<div className="card" />
 			</div>
-			<div className="confirm-reg">Confirm</div>
+			<div className="confirm-reg">
+				<button className="action-btn" onClick={() => onSaveRegistrant()}>
+					Confirm
+				</button>
+			</div>
 		</div>
 	);
 };

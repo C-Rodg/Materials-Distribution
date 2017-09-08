@@ -21,6 +21,9 @@ class App extends Component {
 	// Scan Read
 	onScanRead = data => {
 		this.setState({ isLoading: true });
+		// Parse out data..
+		// Load translation..
+		// Set state.registrant...
 	};
 
 	// Back button clicked
@@ -46,6 +49,11 @@ class App extends Component {
 		console.log("STOPPING SCAN");
 	};
 
+	// Save registrant pickup
+	handleSaveRegistrant = () => {
+		console.log("savingggg");
+	};
+
 	render() {
 		return (
 			<div className="app">
@@ -55,7 +63,10 @@ class App extends Component {
 				/>
 				<main className="main">
 					{this.state.registrant ? (
-						<RegistrantContent />
+						<RegistrantContent
+							registrant={this.state.registrant}
+							onSaveRegistrant={this.handleSaveRegistrant}
+						/>
 					) : (
 						<WaitingContent
 							onStartScan={this.handleStartScan}
