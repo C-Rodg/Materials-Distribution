@@ -3,33 +3,66 @@
 	display: flex;
 	align-items: center;
 	position: relative;
-	margin: 0.3em 0;
+	margin: 0.6em 0;
 	border-radius: 4px;
 	background-color: #e8e8e8;
 	overflow: hidden;
 
 	label {
 		flex: 1;
-		padding: 1em 1em;
+		padding: 0.8em 0 0.8em 0.8em;
 		font-weight: 700;
 		z-index: 3;
 	}
 
 	.box {
-		z-index: 3;
+        z-index: 3;
+        padding: 0.8em;
+
+        svg {
+            border: 3px solid #333;
+            border-radius: 2px;
+            transition: border-color .1s ease-in-out;
+
+            path {
+                
+                transition: stroke-dashoffset 0.3s ease-in-out;
+            }
+        }
 	}
 
 	&.complete {
 		label {
 			color: #fff;
-		}
-	}
+        }
+        
+        .box svg  {
+            border-color: #fff;
+            path {
+                stroke-dashoffset: 0;
+            }            
+        }
+    }
+    
+    &.complete.disabled {
+        .box svg {
+            border-color: #888;
+
+            path {
+                stroke: #888;
+            }
+        }
+    }
 
 	&.disabled {
 		label {
 			text-decoration: line-through;
 			color: #888;
-		}
+        }
+        
+        svg {
+            border-color: #888;
+        }
 	}
 
 	&:not(.disabled)::after {
@@ -47,5 +80,24 @@
 	&.complete:not(.disabled)::after {
 		transform: translate3d(0, 0, 0);
 		opacity: 1;
-	}
+    }
+    
+    &.shake {
+        animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+    }
+}
+
+@keyframes shake {
+    10%, 90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+    20%, 80% {
+        transform: translate3d(2px, 0,0);
+    }
+    30%,50%, 70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+    40%, 60% {
+        transform: translate3d(4px, 0,0);
+    }
 }

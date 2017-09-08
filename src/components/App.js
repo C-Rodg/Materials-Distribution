@@ -15,7 +15,7 @@ class App extends Component {
 	}
 
 	componentDidMount() {
-		// Attach window.OnDataRead, etc...
+		// TODO: Attach window.OnDataRead, etc...
 	}
 
 	// Scan Read
@@ -28,6 +28,8 @@ class App extends Component {
 
 	// Back button clicked
 	handleGoBack = () => {
+		// TODO: ALERT OF UNSAVED CHANGES
+		alert("UNSAVED CHANGES!");
 		this.setState({
 			registrant: null,
 			isLoading: false
@@ -39,18 +41,23 @@ class App extends Component {
 		console.log("STARTING SCAN");
 		this.setState({ isLoading: true });
 		setTimeout(() => {
-			this.setState({ registrant: {} });
+			this.setState({ registrant: {
+				
+			} });
 		}, 1500);
 		//this.setState({ registrant: {} });
+		// TODO: START SCAN
 	};
 
 	// Scan button released
 	handleStopScan = () => {
+		// TODO: STOP SCAN
 		console.log("STOPPING SCAN");
 	};
 
 	// Save registrant pickup
 	handleSaveRegistrant = () => {
+		// TODO: HANDLE SAVING AND SHOW THANK YOU AND RESET
 		console.log("savingggg");
 	};
 
