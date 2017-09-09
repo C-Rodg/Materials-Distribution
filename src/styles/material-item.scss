@@ -5,7 +5,7 @@
 	position: relative;
 	margin: 0.6em 0;
 	border-radius: 4px;
-	background-color: #e8e8e8;
+	background-color: $tile-bg;
 	overflow: hidden;
 
 	label {
@@ -20,7 +20,7 @@
         padding: 0.8em;
 
         svg {
-            border: 3px solid #333;
+            border: 3px solid $med-dark-text;
             border-radius: 2px;
             transition: border-color .1s ease-in-out;
 
@@ -33,11 +33,11 @@
 
 	&.complete {
 		label {
-			color: #fff;
+			color: $norm-text;
         }
         
         .box svg  {
-            border-color: #fff;
+            border-color: $norm-text;
             path {
                 stroke-dashoffset: 0;
             }            
@@ -46,10 +46,10 @@
     
     &.complete.disabled {
         .box svg {
-            border-color: #888;
+            border-color: $disabled-border;
 
             path {
-                stroke: #888;
+                stroke: $disabled-border;
             }
         }
     }
@@ -57,11 +57,11 @@
 	&.disabled {
 		label {
 			text-decoration: line-through;
-			color: #888;
+			color: $disabled-border;
         }
         
         svg {
-            border-color: #888;
+            border-color: $disabled-border;
         }
 	}
 
