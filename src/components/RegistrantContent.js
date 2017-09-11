@@ -4,37 +4,35 @@ import "../styles/registrant-content.scss";
 
 import MaterialItem from "./MaterialItem";
 
-const RegistrantContent = ({ registrant, onSaveRegistrant }) => {
+const RegistrantContent = ({
+	registrant,
+	onSaveRegistrant,
+	updateRegistrantObject
+}) => {
 	return (
 		<div className="registrant-content">
 			<div className="registrant-info">
 				<div className="card">
-					<div className="title">James Dixon-Smith</div>
+					<div className="title">
+						{[registrant.firstName, registrant.lastName].join(" ")}
+					</div>
 					<div className="material-items">
-						<MaterialItem
-							valueChange={testCallback}
-							checked={true}
-							disabled={false}
-							title={"American Express - Wednesday"}
-						/>
-						<MaterialItem
-							valueChange={testCallback}
-							checked={false}
-							disabled={false}
-							title={"American Express - Thursday"}
-						/>
-						<MaterialItem
-							valueChange={testCallback}
-							checked={false}
-							disabled={true}
-							title={"T-Shirt (Medium)"}
-						/>
-						<MaterialItem
-							valueChange={testCallback}
-							checked={true}
-							disabled={true}
-							title={"iPad"}
-						/>
+						{registrant.items && registrant.items.length > 0 ? (
+							registrant.items.map(item => {
+								return (
+									<MaterialItem
+										key={item.tag}
+										checked={item.hasPickedUp}
+										disabled={item.disabled}
+										title={item.name}
+										tag={item.tag}
+										valueChange={updateRegistrantObject}
+									/>
+								);
+							})
+						) : (
+							<div className="no-items">No items found...</div>
+						)}
 					</div>
 				</div>
 			</div>

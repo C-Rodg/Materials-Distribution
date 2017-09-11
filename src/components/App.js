@@ -39,14 +39,56 @@ class App extends Component {
 	// Scan button pressed
 	handleStartScan = () => {
 		console.log("STARTING SCAN");
+		const items = [
+			{
+				name: "American Express - Wednesday",
+				tag: "qrAmerWed",
+				hasPickedUp: true,
+				disabled: false
+			},
+			{
+				name: "American Express - Thursday",
+				tag: "qrAmerThurs",
+				hasPickedUp: false,
+				disabled: false
+			},
+			{
+				name: "T-Shirt (Medium)",
+				tag: "qrTee",
+				hasPickedUp: false,
+				disabled: true
+			},
+			{ name: "iPad", tag: "qrIpad", hasPickedUp: true, disabled: true }
+		];
 		this.setState({ isLoading: true });
 		setTimeout(() => {
-			this.setState({ registrant: {
-				
-			} });
+			this.setState({
+				registrant: {
+					firstName: "James",
+					lastName: "Dixon-Smith",
+					items
+				}
+			});
 		}, 1500);
 		//this.setState({ registrant: {} });
 		// TODO: START SCAN
+	};
+
+	// Update registrant object with new values
+	handleUpdateRegistrantObject = (tag, value) => {
+		const items = this.state.registrant.items.map(item => {
+			if (item.tag === tag) {
+				return Object.assign({}, item, { hasPickedUp: value });
+			}
+			return item;
+		});
+		this.setState({
+			registrant: {
+				firstName: this.state.registrant.firstName,
+				lastName: this.state.registrant.lastName,
+				items
+			}
+		});
 	};
 
 	// Scan button released
@@ -73,6 +115,7 @@ class App extends Component {
 						<RegistrantContent
 							registrant={this.state.registrant}
 							onSaveRegistrant={this.handleSaveRegistrant}
+							updateRegistrantObject={this.handleUpdateRegistrantObject}
 						/>
 					) : (
 						<WaitingContent
