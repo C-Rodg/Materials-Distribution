@@ -75,6 +75,9 @@ body {
 }
 
 .action-btn {
+	min-height: 56px;
+	width: 100%;
+	max-width: 450px;
 	text-transform: uppercase;
 	cursor: pointer;
 	user-select: none;

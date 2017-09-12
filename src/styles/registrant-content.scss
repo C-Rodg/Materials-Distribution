@@ -1,5 +1,25 @@
 @import "./variables";
 
+@mixin center {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+@mixin ball {
+	@include center;
+	content: "";
+	display: block;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: #fff;
+	z-index: 2;
+	margin-top: 6px;
+	animation: ball 0.45s cubic-bezier(0, 0, 0.15, 1) alternate infinite;
+}
+
 .registrant-content {
 	flex: 1;
 	display: flex;
@@ -26,5 +46,69 @@
 				margin-bottom: 10px;
 			}
 		}
+	}
+
+	.confirm-reg {
+		position: relative;
+
+		& button {
+			background-color: rgba(255, 255, 255, 0.1);
+			transition: width 0.6s ease-in-out;
+		}
+
+		&.loading {
+			&::before {
+				@include ball;
+				animation-delay: 0.15s;
+			}
+
+			& button {
+				background-color: rgba(255, 255, 255, 0.1);
+				font-size: 0;
+				width: 120px;
+
+				&::before {
+					@include ball;
+					margin-left: -12px;
+				}
+
+				&::after {
+					@include ball;
+					margin-left: 12px;
+					animation-delay: 0.3s;
+				}
+			}
+		}
+
+		&.confirmed {
+			& button {
+				width: 120px;
+			}
+		}
+
+		.svg-success {
+			width: 100%;
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			stroke-width: 3px;
+			stroke: $norm-text;
+			fill: none;
+			& path {
+				stroke-dasharray: 37px 37px;
+				stroke-dashoffset: 0;
+			}
+		}
+	}
+}
+
+@keyframes ball {
+	from {
+		transform: translateY(0) scaleY(0.8);
+	}
+	to {
+		transform: translateY(-10px);
 	}
 }

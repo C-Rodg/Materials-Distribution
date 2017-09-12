@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import Header from "./Header";
 import WaitingContent from "./WaitingContent";
 import RegistrantContent from "./RegistrantContent";
+import Toast from "./Toast";
 
 class App extends Component {
 	constructor(props) {
@@ -10,7 +11,11 @@ class App extends Component {
 
 		this.state = {
 			registrant: null,
-			isLoading: false
+			isLoading: false,
+			isConfirming: false,
+			isConfirmed: false,
+			errorMsg: "",
+			errorCount: 0
 		};
 	}
 
@@ -62,12 +67,21 @@ class App extends Component {
 		];
 		this.setState({ isLoading: true });
 		setTimeout(() => {
+			// this.setState(prevState => {
+			// 	return {
+			// 		errorMsg: "There was an issue loading this registrant...",
+			// 		errorCount: prevState.errorCount + 1,
+			// 		isLoading: false
+			// 	};
+			// });
+			// return false;
 			this.setState({
 				registrant: {
 					firstName: "James",
 					lastName: "Dixon-Smith",
 					items
-				}
+				},
+				isConfirming: false
 			});
 		}, 1500);
 		//this.setState({ registrant: {} });
@@ -98,14 +112,46 @@ class App extends Component {
 	};
 
 	// Save registrant pickup
-	handleSaveRegistrant = () => {
+	handleSaveRegistrant = registrant => {
 		// TODO: HANDLE SAVING AND SHOW THANK YOU AND RESET
 		console.log("savingggg");
+		console.log(registrant);
+		this.setState({ isConfirming: true });
+
+		// Fake completion of save
+		setTimeout(() => {
+			// TESTING ERROR NOTIFICATION
+			// this.setState(prevState => {
+			// 	return {
+			// 		errorMsg: "Unable to save this registrant...",
+			// 		errorCount: prevState.errorCount + 1,
+			// 		isConfirmed: false,
+			// 		isConfirming: false
+			// 	};
+			// });
+			// return false;
+
+			this.setState({
+				isConfirming: false,
+				isConfirmed: true
+			});
+
+			// Reset to main view
+			setTimeout(() => {
+				this.setState({
+					registrant: null,
+					isConfirming: false,
+					isConfirmed: false,
+					isLoading: false
+				});
+			}, 2000);
+		}, 1500);
 	};
 
 	render() {
 		return (
 			<div className="app">
+				<Toast msg={this.state.errorMsg} counter={this.state.errorCount} />
 				<Header
 					onGoBack={this.handleGoBack}
 					registrant={this.state.registrant}
@@ -116,6 +162,8 @@ class App extends Component {
 							registrant={this.state.registrant}
 							onSaveRegistrant={this.handleSaveRegistrant}
 							updateRegistrantObject={this.handleUpdateRegistrantObject}
+							isConfirming={this.state.isConfirming}
+							isConfirmed={this.state.isConfirmed}
 						/>
 					) : (
 						<WaitingContent

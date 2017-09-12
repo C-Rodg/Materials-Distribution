@@ -1,0 +1,68 @@
+@import "./variables.scss";
+
+.toast {
+	opacity: 0;
+	position: absolute;
+	text-align: center;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 4;
+	background-color: $norm-text;
+	padding: 12px 5px;
+	font-size: 1.1rem;
+	visibility: hidden;
+
+	&.in {
+		animation: pullDown 3.1s ease-in-out;
+	}
+
+	.toast-item {
+		color: $med-dark-text;
+	}
+
+	.error {
+		color: $error;
+	}
+}
+
+@keyframes pullDown {
+	0% {
+		visibility: visible;
+		opacity: 0;
+		transform: translateY(-100%);
+	}
+	12.5% {
+		visibility: visible;
+		opacity: 1;
+		transform: translateY(8%);
+	}
+	16.25% {
+		visibility: visible;
+		opacity: 1;
+		transform: translateY(-3%);
+	}
+	20% {
+		visibility: visible;
+		opacity: 1;
+		transform: translateY(3%);
+	}
+	23.75% {
+		visibility: visible;
+		opacity: 1;
+		transform: translateY(-2%);
+	}
+	25% {
+		visibility: visible;
+		opacity: 1;
+		transform: translateY(0%);
+	}
+	99.9% {
+		visibility: visible;
+		opacity: 1;
+		transform: translateY(0%);
+	}
+	100% {
+		visibility: hidden;
+	}
+}
