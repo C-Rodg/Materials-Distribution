@@ -120,16 +120,16 @@ class App extends Component {
 
 		// Fake completion of save
 		setTimeout(() => {
-			// TESTING ERROR NOTIFICATION
-			// this.setState(prevState => {
-			// 	return {
-			// 		errorMsg: "Unable to save this registrant...",
-			// 		errorCount: prevState.errorCount + 1,
-			// 		isConfirmed: false,
-			// 		isConfirming: false
-			// 	};
-			// });
-			// return false;
+			//TESTING ERROR NOTIFICATION
+			this.setState(prevState => {
+				return {
+					errorMsg: "Unable to save this registrant...",
+					errorCount: prevState.errorCount + 1,
+					isConfirmed: false,
+					isConfirming: false
+				};
+			});
+			return false;
 
 			this.setState({
 				isConfirming: false,
