@@ -75,11 +75,16 @@ module.exports = {
 			},
 			{
 				test: /\.woff(2)?(\?[a-z0-9#=&.]+)?$/,
-				loader: "url-loader?limit=10000&mimetype=application/font-woff"
+				loader:
+					"url-loader?limit=10000&mimetype=application/font-woff&name=fonts/[name].[ext]"
 			},
 			{
-				test: /\.(ttf|eot|svg|png|jpg|ico)(\?[a-z0-9#=&.]+)?$/,
-				loader: "file-loader"
+				test: /\.(svg|png|jpg|ico)(\?[a-z0-9#=&.]+)?$/,
+				loader: "file-loader?name=images/[name].[ext]"
+			},
+			{
+				test: /\.(ttf|eot)(\?[a-z0-9#=&.]+)?$/,
+				loader: "file-loader?name=fonts/[name].[ext]"
 			},
 			{
 				test: /\.json$/,
