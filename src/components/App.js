@@ -5,6 +5,8 @@ import WaitingContent from "./WaitingContent";
 import RegistrantContent from "./RegistrantContent";
 import Toast from "./Toast";
 
+import { startUpApplication } from "../services/authorization";
+
 class App extends Component {
 	constructor(props) {
 		super(props);
@@ -21,6 +23,15 @@ class App extends Component {
 
 	componentDidMount() {
 		// TODO: Attach window.OnDataRead, etc...
+		startUpApplication()
+			.then(data => {
+				console.log("ALL FINISHED!");
+				console.log(data);
+			})
+			.catch(err => {
+				console.log("ALL finished WITH ERROR");
+				console.log(err);
+			});
 	}
 
 	// Scan Read
