@@ -34,6 +34,18 @@ class App extends Component {
 			});
 	}
 
+	testMethod = () => {
+		// startUpApplication()
+		// 	.then(data => {
+		// 		console.log("ALL FINISHED!");
+		// 		console.log(data || "0");
+		// 	})
+		// 	.catch(err => {
+		// 		console.log("ALL finished WITH ERROR");
+		// 		console.log(err);
+		// 	});
+	};
+
 	// Scan Read
 	onScanRead = data => {
 		this.setState({ isLoading: true });
@@ -168,6 +180,14 @@ class App extends Component {
 					registrant={this.state.registrant}
 				/>
 				<main className="main">
+					<div
+						className="test-button"
+						style={{ padding: "15px", position: "absolute", left: 0, right: 0 }}
+						onClick={this.testMethod}
+					>
+						TEST STARTUP
+					</div>
+
 					{this.state.registrant ? (
 						<RegistrantContent
 							registrant={this.state.registrant}

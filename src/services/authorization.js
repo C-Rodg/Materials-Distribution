@@ -8,23 +8,15 @@ let currentToken = null,
 
 export const startUpApplication = async () => {
 	try {
-		console.log("Get client and lead source");
 		await Promise.all([getClientInfo(), getLeadSourceInfo()]);
-		console.log("Getting Token");
 		const tokenResponse = await getAuthToken();
 		if (tokenResponse.data && tokenResponse.data.SessionToken) {
 			currentToken = tokenResponse.data.SessionToken;
 		} else {
-			console.log("Updating token");
 			await updateToken();
 		}
 		await getSeat();
-		console.log("----------------");
-		console.log(seat);
-		console.log(client);
-		console.log(leadsource);
-		console.log(currentToken);
-		console.log("----------------");
+		return { Success: true };
 	} catch (e) {
 		console.log("ERROR BUBBLED!");
 		console.log(e);
@@ -35,7 +27,6 @@ export const startUpApplication = async () => {
 const getClientInfo = async () => {
 	const clientResponse = await axios.get("http://localhost/clientinfo");
 	client = clientResponse.data;
-	console.log(client);
 	return client;
 };
 
@@ -45,7 +36,6 @@ const getLeadSourceInfo = async () => {
 		`http://localhost/leadsources/${LeadSourceGuid.guid}`
 	);
 	leadsource = leadResponse.data.LeadSource;
-	console.log(leadsource);
 	return leadsource;
 };
 
@@ -68,18 +58,16 @@ export const updateToken = () => {
 
 // Initiate Challenge
 const initiateChallenge = async () => {
-	console.log("startingin initiate");
 	let loginArgs = {
 		loginRestUrl: leadsource.LoginUrl,
 		authCode: leadsource.AuthCode,
 		authGuid: leadsource.AuthGuid
 	};
-	const inititateResponse = await axios.post(
+	const initResponse = await axios.post(
 		`${loginArgs.loginRestUrl}/InitiateChallenge/${loginArgs.authGuid}`,
 		loginArgs
 	);
-	loginArgs.challenge = initiateResponse.data;
-	console.log(loginArgs);
+	loginArgs.challenge = initResponse.data;
 	return loginArgs;
 };
 
@@ -94,7 +82,6 @@ const computeHash = async loginArgs => {
 		request
 	);
 	loginArgs.hash = hashResponse.data.Hash;
-	console.log(loginArgs);
 	return loginArgs;
 };
 
@@ -103,24 +90,23 @@ const validateChallenge = async loginArgs => {
 	let urlHash = loginArgs.hash.replace(/\//g, "_");
 	urlHash = urlHash.replace(/\+/g, "-");
 	const challengeResponse = await axios.post(
-		`${loginARgs.loginRestUrl}/ValidateChallenge/${loginArgs.challenge
-			.ChallengeGuide}/${encodeURIComponent(urlHash)}`,
+		`${loginArgs.loginRestUrl}/ValidateChallenge/${loginArgs.challenge
+			.ChallengeGuid}/${encodeURIComponent(urlHash)}`,
 		loginArgs
 	);
-	console.log(challengeResponse.data.SessionToken);
 	return challengeResponse.data.SessionToken;
 };
 
 // Save the token
-const saveToken = loginArgs => {
-	let currentToken = {
-		SessionToken: loginArgs.SessionToken
+const saveToken = token => {
+	let sendToken = {
+		SessionToken: token
 	};
-	currentToken = loginArgs.SessionToken;
+	currentToken = token;
 
-	return this.http.put(
+	return axios.put(
 		`http://localhost/leadsources/${LeadSourceGuid.guid}/sessiontoken`,
-		currentToken
+		sendToken
 	);
 };
 
@@ -143,6 +129,7 @@ const getSeat = async () => {
 	const acquireResponse = await acquireSeat();
 	if (acquireResponse.data && acquireResponse.data.SeatGuid) {
 		seat = acquireResponse.data.SeatGuid;
+		await setSeat(acquireResponse.data);
 		return seat;
 	}
 };
@@ -158,12 +145,21 @@ const acquireSeat = () => {
 	};
 	return axios({
 		url,
-		method: "post",
-		data: obj,
 		headers: {
 			Authorization: `ValidarSession token="${getCurrentToken()}"`
-		}
+		},
+		withCredentials: true,
+		method: "POST",
+		data: obj
 	});
+};
+
+// Save seat to local
+const setSeat = seat => {
+	return axios.put(
+		`http://localhost/leadsources/${LeadSourceGuid.guid}/seat`,
+		seat
+	);
 };
 
 const releaseSeat = () => {
@@ -174,10 +170,12 @@ const releaseSeat = () => {
 		};
 		return axios({
 			url,
-			data: obj,
+			method: "POST",
 			headers: {
 				Authorization: `ValidarSession token="${getCurrentToken()}"`
-			}
+			},
+			withCredentials: true,
+			data: obj
 		});
 	}
 };
