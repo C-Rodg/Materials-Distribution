@@ -1,0 +1,38 @@
+@import "./variables";
+.material-switch {
+	.material-switch-container {
+		display: flex;
+		flex-direction: row;
+		position: relative;
+
+		&.shake {
+			animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+		}
+	}
+
+	.material-switch-instructions {
+		font-weight: 600;
+		margin-bottom: 7px;
+		font-size: 0.9rem;
+		text-align: center;
+	}
+
+	.material-switch-item {
+		width: 50%;
+		padding: 0.8em 0 0.8em 0.8em;
+		font-weight: 700;
+		text-align: center;
+		background-color: #e8e8e8;
+		border-radius: 4px;
+
+		&:first-child {
+			margin-right: 2%;
+			padding-right: 2%;
+		}
+
+		&.selected {
+			background-color: rgba(126, 196, 183, 1);
+			color: #fff;
+		}
+	}
+}

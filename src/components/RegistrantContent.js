@@ -3,6 +3,7 @@ import React from "react";
 import "../styles/registrant-content.scss";
 
 import MaterialItem from "./MaterialItem";
+import MaterialSwitch from './MaterialSwitch'
 
 const RegistrantContent = ({
 	registrant,
@@ -21,16 +22,28 @@ const RegistrantContent = ({
 					<div className="material-items">
 						{registrant.items && registrant.items.length > 0 ? (
 							registrant.items.map(item => {
-								return (
-									<MaterialItem
-										key={item.tag}
-										checked={item.hasPickedUp}
-										disabled={item.disabled}
-										title={item.name}
-										tag={item.tag}
-										valueChange={updateRegistrantObject}
-									/>
-								);
+								if (item.type === "TF") {
+									return (
+										<MaterialItem
+											key={item.tag}
+											checked={item.hasPickedUp}
+											disabled={item.disabled}
+											title={item.name}
+											tag={item.tag}
+											valueChange={updateRegistrantObject}
+										/>
+									);
+								} else if (item.type === "SWITCH") {
+									return (<MaterialSwitch 
+											key={item.tag}
+											tag={item.tag} 
+											valueChange={updateRegistrantObject} 
+											valOne={item.valOne} 
+											valTwo={item.valTwo} 
+											selected={item.selected} 
+											disabled={item.disabled} />
+									);
+								}
 							})
 						) : (
 							<div className="no-items">No items found...</div>

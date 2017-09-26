@@ -57,11 +57,15 @@ class App extends Component {
 	// Back button clicked
 	handleGoBack = () => {
 		// TODO: ALERT OF UNSAVED CHANGES
-		alert("UNSAVED CHANGES!");
-		this.setState({
-			registrant: null,
-			isLoading: false
-		});
+		var confirm = confirm(
+			"Are you sure you want to leave this record?  This records data will not be saved."
+		);
+		if (confirm) {
+			this.setState({
+				registrant: null,
+				isLoading: false
+			});
+		}
 	};
 
 	// Scan button pressed
@@ -69,24 +73,41 @@ class App extends Component {
 		console.log("STARTING SCAN");
 		const items = [
 			{
+				type: "TF",
 				name: "American Express - Wednesday",
-				tag: "qrAmerWed",
+				tag: "qrPickedUpAmexWed",
 				hasPickedUp: true,
 				disabled: false
 			},
 			{
+				type: "TF",
 				name: "American Express - Thursday",
-				tag: "qrAmerThurs",
+				tag: "qrPickedUpAmexThurs",
 				hasPickedUp: false,
 				disabled: false
 			},
 			{
+				type: "TF",
 				name: "T-Shirt (Medium)",
-				tag: "qrTee",
+				tag: "qrPickedUpShirt",
 				hasPickedUp: false,
 				disabled: true
 			},
-			{ name: "iPad", tag: "qrIpad", hasPickedUp: true, disabled: true }
+			{
+				type: "TF",
+				name: "iPad",
+				tag: "qrIpad",
+				hasPickedUp: true,
+				disabled: true
+			},
+			{
+				type: "SWITCH",
+				tag: "qrPickedUpGiftB",
+				valOne: "Oversized Truck",
+				valTwo: "Hat",
+				selected: "",
+				disabled: false
+			}
 		];
 		this.setState({ isLoading: true });
 		setTimeout(() => {
@@ -114,8 +135,10 @@ class App extends Component {
 	// Update registrant object with new values
 	handleUpdateRegistrantObject = (tag, value) => {
 		const items = this.state.registrant.items.map(item => {
-			if (item.tag === tag) {
+			if (item.tag === tag && item.type === "TF") {
 				return Object.assign({}, item, { hasPickedUp: value });
+			} else if (item.tag === tag && item.type === "SWITCH") {
+				return Object.assign({}, item, { selected: value });
 			}
 			return item;
 		});
