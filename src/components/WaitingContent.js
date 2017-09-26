@@ -20,8 +20,9 @@ const WaitingContent = ({ onStartScan, onStopScan, isLoading }) => {
 			<div className="start-scan">
 				<button
 					className={["action-btn", isLoading ? "fade-out" : ""].join(" ")}
-					onTouchStart={() => onStartScan()}
-					onTouchEnd={() => onStopScan()}
+					id="start-scan-btn"
+					onTouchStart={onStartScan}
+					onTouchEnd={onStopScan}
 				>
 					Start Scan
 				</button>

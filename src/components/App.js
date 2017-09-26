@@ -5,7 +5,12 @@ import WaitingContent from "./WaitingContent";
 import RegistrantContent from "./RegistrantContent";
 import Toast from "./Toast";
 
-import { startUpApplication } from "../services/authorization";
+import {
+	startUpApplication,
+	getClientAndLeadSource
+} from "../services/authorization";
+
+import { sendScanCommand } from "../services/scanning";
 
 class App extends Component {
 	constructor(props) {
@@ -25,14 +30,37 @@ class App extends Component {
 		// TODO: Attach window.OnDataRead, etc...
 		startUpApplication()
 			.then(data => {
-				console.log("ALL FINISHED!");
-				console.log(data);
+				alert("started up application");
 			})
 			.catch(err => {
-				console.log("ALL finished WITH ERROR");
-				console.log(err);
+				alert("We ran into an issue trying to boot up the application...");
 			});
+
+		sendScanCommand("enableButtonScan");
+
+		window.OnLineaConnect = this.handleLineaConnect;
+		window.OnDataRead = this.handleOnDataRead;
 	}
+
+	// Handle OnDataRead function from a scan
+	handleOnDataRead = data => {
+		//this.setState({ isLoading: true });
+		//alert(JSON.stringify(data));
+		//{Data: 'badgestuff...', Symbology: 'QR Code', Source: 'Linea-Barcode'}
+	};
+
+	// Handle Linea device connected and enable scanning
+	handleLineaConnect = () => {
+		sendScanCommand("enableButtonScan");
+
+		getClientAndLeadSource()
+			.then(() => {
+				alert("COMPLETE CONNECT");
+			})
+			.catch(err => {
+				alert(JSON.stringify(err, null, 2));
+			});
+	};
 
 	testMethod = () => {
 		// startUpApplication()
@@ -69,8 +97,10 @@ class App extends Component {
 	};
 
 	// Scan button pressed
-	handleStartScan = () => {
-		console.log("STARTING SCAN");
+	handleStartScan = ev => {
+		ev.currentTarget.classList.add("scan-clicked");
+		sendScanCommand("startScan");
+		return false;
 		const items = [
 			{
 				type: "TF",
@@ -132,6 +162,12 @@ class App extends Component {
 		// TODO: START SCAN
 	};
 
+	// Scan button released
+	handleStopScan = ev => {
+		ev.currentTarget.classList.remove("scan-clicked");
+		sendScanCommand("stopScan");
+	};
+
 	// Update registrant object with new values
 	handleUpdateRegistrantObject = (tag, value) => {
 		const items = this.state.registrant.items.map(item => {
@@ -149,12 +185,6 @@ class App extends Component {
 				items
 			}
 		});
-	};
-
-	// Scan button released
-	handleStopScan = () => {
-		// TODO: STOP SCAN
-		console.log("STOPPING SCAN");
 	};
 
 	// Save registrant pickup

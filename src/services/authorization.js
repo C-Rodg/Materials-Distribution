@@ -8,7 +8,7 @@ let currentToken = null,
 
 export const startUpApplication = async () => {
 	try {
-		await Promise.all([getClientInfo(), getLeadSourceInfo()]);
+		await getClientAndLeadSource();
 		const tokenResponse = await getAuthToken();
 		if (tokenResponse.data && tokenResponse.data.SessionToken) {
 			currentToken = tokenResponse.data.SessionToken;
@@ -21,6 +21,10 @@ export const startUpApplication = async () => {
 		console.log("ERROR BUBBLED!");
 		console.log(e);
 	}
+};
+
+export const getClientAndLeadSource = () => {
+	return Promise.all([getClientInfo(), getLeadSourceInfo()]);
 };
 
 // Get Client Info
