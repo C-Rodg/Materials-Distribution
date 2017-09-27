@@ -52,14 +52,7 @@ class App extends Component {
 	// Handle Linea device connected and enable scanning
 	handleLineaConnect = () => {
 		sendScanCommand("enableButtonScan");
-
-		getClientAndLeadSource()
-			.then(() => {
-				alert("COMPLETE CONNECT");
-			})
-			.catch(err => {
-				alert(JSON.stringify(err, null, 2));
-			});
+		getClientAndLeadSource().then(() => {});
 	};
 
 	testMethod = () => {

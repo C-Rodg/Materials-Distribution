@@ -27,6 +27,26 @@ export const getClientAndLeadSource = () => {
 	return Promise.all([getClientInfo(), getLeadSourceInfo()]);
 };
 
+export const getLeadSourceURL = () => {
+	if (leadsource.LeadSourceUrl) {
+		return leadsource.LeadSourceUrl;
+	} else {
+		getLeadSourceInfo().then(data => {
+			return data.LeadSourceUrl;
+		});
+	}
+};
+
+export const getClientGuid = () => {
+	if (client.ClientGuid) {
+		return client.ClientGuid;
+	} else {
+		getClientInfo().then(data => {
+			return data.ClientGuid;
+		});
+	}
+};
+
 // Get Client Info
 const getClientInfo = async () => {
 	const clientResponse = await axios.get("http://localhost/clientinfo");
@@ -122,7 +142,7 @@ export const getCurrentToken = () => {
 // ------------- SEAT SERVICES -------------- //
 
 // Get Seat from local database or acquire one if necessary
-const getSeat = async () => {
+export const getSeat = async () => {
 	const seatResponse = await axios.get(
 		`http://localhost/leadsources/${LeadSourceGuid.guid}/seat`
 	);
