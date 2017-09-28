@@ -3,8 +3,8 @@ import { LeadSourceGuid } from "./leadSourceGuid";
 
 import {
 	getSeat,
-	getLeadSourceURL,
-	getClientGuid,
+	getClientObject,
+	getLeadSourceObject,
 	getCurrentToken
 } from "./authorization";
 
@@ -12,11 +12,12 @@ import {
 export const translate = async record => {
 	let trans = null;
 	const seat = await getSeat();
-	let url = `${getLeadSourceURL()}/Translate/${LeadSourceGuid.guid}/${seat}`;
+	let url = `${getLeadSourceObject()
+		.LeadSourceUrl}/Translate/${LeadSourceGuid.guid}/${seat}`;
 	let req = {
 		Source: record.ScanData,
 		RequestingApplication: record.LeadGuid,
-		RequestingClientGuid: getClientGuid()
+		RequestingClientGuid: getClientObject().ClientGuid
 	};
 	const translateResponse = await axios({
 		url,
@@ -37,5 +38,44 @@ const updateTranslation = (leadGuid, translation) => {
 	return axios.put(
 		`http://localhost/leadsources/${LeadSourceGuid.guid}/leads/${leadGuid}/translation`,
 		translation
+	);
+};
+
+// Find record(s)
+export const findRecord = query => {
+	return axios.get(
+		`http://localhost/leadsources/${LeadSourceGuid.guid}/leads?${query}`
+	);
+};
+
+// Save new record
+export const saveNewRecord = record => {
+	return axios.put(
+		`http://localhost/leadsources/${LeadSourceGuid.guid}/leads`,
+		record
+	);
+};
+
+// Save a visit
+export const saveVisit = lead => {
+	return axios.put(
+		`http://localhost/leadsources/${LeadSourceGuid.guid}/visits`,
+		lead
+	);
+};
+
+// Mark record as deleted
+export const markDeleted = guid => {
+	return axios.put(
+		`http://localhost/leadsources/${LeadSourceGuid.guid}/leads/${guid}/deleted`,
+		{}
+	);
+};
+
+// Mark record as undeleted
+export const markUndeleted = guid => {
+	return axios.put(
+		`http://localhost/leadsources/${LeadSourceGuid.guid}/leads/${guid}/undeleted`,
+		{}
 	);
 };

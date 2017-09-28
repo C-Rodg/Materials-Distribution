@@ -3,6 +3,15 @@ import { LeadSourceGuid } from "./leadSourceGuid";
 
 const lineaURL = "http://localhost/linea/";
 
+import { getClientObject } from "./authorization";
+import {
+	findRecord,
+	saveNewRecord,
+	saveVisit,
+	markDeleted,
+	markUndeleted
+} from "./registrant";
+
 // Send command to linea services
 export const sendScanCommand = cmd => {
 	return axios.get(`${lineaURL}${cmd}`).then(() => {});
@@ -32,7 +41,7 @@ export const parse = source => {
 	}
 };
 
-const parseBarcode = scannedData => {
+const parseBarcode = async scannedData => {
 	let scannedId = scannedData,
 		scannedFields = null,
 		badgeId = null,
@@ -80,7 +89,65 @@ const parseBarcode = scannedData => {
 
 	scannedId = scannedId.replace(/^\s+|\s+$/g, "");
 	if (scannedId !== "" && scannedId.length < 384) {
-		// Handle saving of record or...
+		// TODO: PLAY GRANTED SOUND
+		const findResponse = await findRecord(`ScanData=${scannedId}`);
+		const client = getClientObject();
+		const visit = {
+			ScanData: scannedId,
+			CapturedBy: client.ClientName,
+			CaptureStation: client.DeviceType
+		};
+		if (findResponse.data && findResponse.data.length > 0) {
+			await saveVisit(visit);
+			const guid = findResponse.data[0].LeadGuid;
+			if (findResponse.data[0].DeleteDateTime !== null) {
+				await markUndeleted(guid);
+			} else {
+				await markDeleted(guid);
+				await markUndeleted(guid);
+			}
+			alert("done saving existing record");
+			alert(JSON.stringify(findResponse.data[0]));
+			return findResponse.data[0];
+		} else {
+			alert("new lead");
+			const lead = {
+				ScanData: scannedId,
+				Keys: [
+					{ Type: "7A56282B-4855-4585-B10B-E76B111EA1DB", Value: badgeId }
+				],
+				Responses: []
+			};
+			const resp = lead.Responses;
+			if (scannedData) {
+				resp.push({ Tag: "lcUnmapped", Value: scannedData });
+			}
+			if (badgeId) {
+				resp.push({ Tag: "lcBadgeId", Value: badgeId });
+			}
+			if (badgeFirst) {
+				resp.push({ Tag: "lcFirstName", Value: badgeFirst });
+			}
+			if (badgeLast) {
+				resp.push({ Tag: "lcLastName", Value: badgeLast });
+			}
+			if (badgeCompany) {
+				resp.push({ Tag: "lcCompany", Value: badgeCompany });
+			}
+
+			lead.Keys.push({
+				Type: "F9F457FE-7E6B-406E-9946-5A23C50B4DF5",
+				Value: `${client.DeviceType}|${client.ClientName}`
+			});
+
+			const saveNewResponse = await saveNewRecord(lead);
+			lead.LeadGuid = saveNewResponse.data.LeadGuid;
+
+			await saveVisit(visit);
+			alert("done saving new record");
+			alert(JSON.stringify(lead));
+			return lead;
+		}
 	}
 };
 

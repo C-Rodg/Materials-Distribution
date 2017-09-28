@@ -10,7 +10,7 @@ import {
 	getClientAndLeadSource
 } from "../services/authorization";
 
-import { sendScanCommand } from "../services/scanning";
+import { sendScanCommand, parse } from "../services/scanning";
 
 class App extends Component {
 	constructor(props) {
@@ -45,34 +45,23 @@ class App extends Component {
 	// Handle OnDataRead function from a scan
 	handleOnDataRead = data => {
 		//this.setState({ isLoading: true });
-		//alert(JSON.stringify(data));
+		alert(JSON.stringify(data));
 		//{Data: 'badgestuff...', Symbology: 'QR Code', Source: 'Linea-Barcode'}
+		parse(data)
+			.then(parseData => {
+				alert("DONE RETURNING PARSED DATA");
+				alert(JSON.stringify(parseData));
+			})
+			.catch(parseErr => {
+				alert("ERROR FROM PARSED DATA");
+				alert(JSON.stringify(parseErr));
+			});
 	};
 
 	// Handle Linea device connected and enable scanning
 	handleLineaConnect = () => {
 		sendScanCommand("enableButtonScan");
 		getClientAndLeadSource().then(() => {});
-	};
-
-	testMethod = () => {
-		// startUpApplication()
-		// 	.then(data => {
-		// 		console.log("ALL FINISHED!");
-		// 		console.log(data || "0");
-		// 	})
-		// 	.catch(err => {
-		// 		console.log("ALL finished WITH ERROR");
-		// 		console.log(err);
-		// 	});
-	};
-
-	// Scan Read
-	onScanRead = data => {
-		this.setState({ isLoading: true });
-		// Parse out data..
-		// Load translation..
-		// Set state.registrant...
 	};
 
 	// Back button clicked
@@ -226,14 +215,6 @@ class App extends Component {
 					registrant={this.state.registrant}
 				/>
 				<main className="main">
-					<div
-						className="test-button"
-						style={{ padding: "15px", position: "absolute", left: 0, right: 0 }}
-						onClick={this.testMethod}
-					>
-						TEST STARTUP
-					</div>
-
 					{this.state.registrant ? (
 						<RegistrantContent
 							registrant={this.state.registrant}

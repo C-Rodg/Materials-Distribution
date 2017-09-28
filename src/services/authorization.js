@@ -27,24 +27,12 @@ export const getClientAndLeadSource = () => {
 	return Promise.all([getClientInfo(), getLeadSourceInfo()]);
 };
 
-export const getLeadSourceURL = () => {
-	if (leadsource.LeadSourceUrl) {
-		return leadsource.LeadSourceUrl;
-	} else {
-		getLeadSourceInfo().then(data => {
-			return data.LeadSourceUrl;
-		});
-	}
+export const getLeadSourceObject = () => {
+	return leadsource;
 };
 
-export const getClientGuid = () => {
-	if (client.ClientGuid) {
-		return client.ClientGuid;
-	} else {
-		getClientInfo().then(data => {
-			return data.ClientGuid;
-		});
-	}
+export const getClientObject = () => {
+	return client;
 };
 
 // Get Client Info
