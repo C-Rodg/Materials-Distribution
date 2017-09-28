@@ -12,7 +12,10 @@ import {
 
 import { sendScanCommand, parse } from "../services/scanning";
 
-import { translate } from "../services/registrant";
+import {
+	translate,
+	convertTranslationToRegistrant
+} from "../services/registrant";
 
 class App extends Component {
 	constructor(props) {
@@ -45,39 +48,45 @@ class App extends Component {
 	// Handle OnDataRead function from a scan
 	handleOnDataRead = data => {
 		//this.setState({ isLoading: true });
-		//alert(JSON.stringify(data));
-		//{Data: 'badgestuff...', Symbology: 'QR Code', Source: 'Linea-Barcode'}
+
+		// If not on scan page..
 		if (this.state.registrant) {
-			this.setState(prevState => {
-				return {
-					errorMsg: "Please first go back to scan a new registrant..",
-					errorCount: prevState.errorCount + 1
-				};
-			});
-			return false;
-		} else if (!window.navigator.onLine) {
-			this.setState(prevState => {
-				return {
-					errorMsg: "Device appears to be offline..",
-					errorCount: prevState.errorCount + 1
-				};
-			});
+			this.displayError("Please first go back to scan a new registrant..");
 			return false;
 		}
+		// If we're not online
+		if (!window.navigator.onLine) {
+			this.displayError("Device appears to be offline..");
+			return false;
+		}
+		// Parse badge data, translate, reload record, parse and set registrant
+		let scanData = "";
 		parse(data)
 			.then(parseData => {
-				alert("DONE RETURNING PARSED DATA");
-				alert(JSON.stringify(parseData));
+				scanData = parseData.ScanData;
 				return translate(parseData);
 			})
 			.then(translateData => {
-				alert("DONE TRANSLATING DATA");
-				alert(JSON.stringify(translateData));
+				console.log(translateData);
+				return convertTranslationToRegistrant(translateData);
 			})
-			.catch(parseErr => {
-				console.log(parseErr || "00");
-				alert("ERROR FROM PARSED DATA");
+			.then(registrant => {
+				console.log(registrant);
+			})
+			.catch(parseError => {
+				//console.log(parseError.message);
+				this.displayError(parseError.message);
 			});
+	};
+
+	// Display Error to user
+	displayError = msg => {
+		this.setState(prevState => {
+			return {
+				errorMsg: msg,
+				errorCount: prevState.errorCount + 1
+			};
+		});
 	};
 
 	// Handle Linea device connected and enable scanning

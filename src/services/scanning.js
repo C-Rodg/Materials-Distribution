@@ -108,7 +108,6 @@ const parseBarcode = async scannedData => {
 			console.log(findResponse.data[0]);
 			return findResponse.data[0];
 		} else {
-			alert("new lead");
 			const lead = {
 				ScanData: scannedId,
 				Keys: [
@@ -154,9 +153,8 @@ const decode_utf8 = s => {
 };
 
 // Generate error
-const generateError = msg => {
+const generateError = message => {
 	return new Promise((resolve, reject) => {
-		reject({ error: true, msg });
+		reject({ message });
 	});
-	//return { error: true, msg };
 };
