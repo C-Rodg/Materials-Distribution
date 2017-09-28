@@ -10,27 +10,37 @@ import {
 
 // Call external service to get translation
 export const translate = async record => {
-	let trans = null;
-	const seat = await getSeat();
-	let url = `${getLeadSourceObject()
-		.LeadSourceUrl}/Translate/${LeadSourceGuid.guid}/${seat}`;
-	let req = {
-		Source: record.ScanData,
-		RequestingApplication: record.LeadGuid,
-		RequestingClientGuid: getClientObject().ClientGuid
-	};
-	const translateResponse = await axios({
-		url,
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `ValidarSession token="${getCurrentToken()}"`
-		}
-	});
-	translateResponse.data.Status = translateResponse.data.TranslationStatus;
-	delete translateResponse.data.TranslationStatus;
-	await updateTranslation(record.LeadGuid, translateResponse.data);
-	return translateResponse.data;
+	try {
+		let trans = null;
+		const seat = await getSeat();
+		let url = `${getLeadSourceObject()
+			.LeadSourceUrl}/Translate/${LeadSourceGuid.guid}/${seat}`;
+		let req = {
+			Source: record.ScanData,
+			RequestingApplication: record.LeadGuid,
+			RequestingClientGuid: getClientObject().ClientGuid
+		};
+		const translateResponse = await axios({
+			url,
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `ValidarSession token="${getCurrentToken()}"`
+			},
+			withCredentials: true,
+			data: req
+		});
+		console.log(translateResponse);
+		translateResponse.data.Status = translateResponse.data.TranslationStatus;
+		delete translateResponse.data.TranslationStatus;
+		console.log("Translation!!");
+		console.log(translateResponse);
+		await updateTranslation(record.LeadGuid, translateResponse.data);
+		return translateResponse.data;
+	} catch (e) {
+		console.log("ERROR IN CATCH");
+		console.log(e || "eee");
+	}
 };
 
 // Update local version of translation

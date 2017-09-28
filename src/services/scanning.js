@@ -17,7 +17,7 @@ export const sendScanCommand = cmd => {
 	return axios.get(`${lineaURL}${cmd}`).then(() => {});
 };
 
-export const parse = source => {
+export const parse = async source => {
 	let symbology = source[0].Symbology,
 		scannedData = decode_utf8(source[0].Data); // Assuming linea sled
 
@@ -48,8 +48,7 @@ const parseBarcode = async scannedData => {
 		badgeFirst = null,
 		badgeLast = null,
 		badgeCompany = null;
-
-	if (scannedData != nulll && scannedData.substring(0, 4) === "VQC:") {
+	if (scannedData != null && scannedData.substring(0, 4) === "VQC:") {
 		scannedData = scannedData.substring(4);
 		scannedFields = scannedData.split(";");
 		if (scannedFields != null) {
@@ -106,8 +105,7 @@ const parseBarcode = async scannedData => {
 				await markDeleted(guid);
 				await markUndeleted(guid);
 			}
-			alert("done saving existing record");
-			alert(JSON.stringify(findResponse.data[0]));
+			console.log(findResponse.data[0]);
 			return findResponse.data[0];
 		} else {
 			alert("new lead");
@@ -144,8 +142,7 @@ const parseBarcode = async scannedData => {
 			lead.LeadGuid = saveNewResponse.data.LeadGuid;
 
 			await saveVisit(visit);
-			alert("done saving new record");
-			alert(JSON.stringify(lead));
+			console.log(lead);
 			return lead;
 		}
 	}
@@ -158,5 +155,8 @@ const decode_utf8 = s => {
 
 // Generate error
 const generateError = msg => {
-	return { error: true, msg };
+	return new Promise((resolve, reject) => {
+		reject({ error: true, msg });
+	});
+	//return { error: true, msg };
 };

@@ -12,6 +12,8 @@ import {
 
 import { sendScanCommand, parse } from "../services/scanning";
 
+import { translate } from "../services/registrant";
+
 class App extends Component {
 	constructor(props) {
 		super(props);
@@ -27,34 +29,54 @@ class App extends Component {
 	}
 
 	componentDidMount() {
-		// TODO: Attach window.OnDataRead, etc...
 		startUpApplication()
 			.then(data => {
-				alert("started up application");
+				// Successfully started application
 			})
 			.catch(err => {
 				alert("We ran into an issue trying to boot up the application...");
 			});
 
-		sendScanCommand("enableButtonScan");
-
 		window.OnLineaConnect = this.handleLineaConnect;
 		window.OnDataRead = this.handleOnDataRead;
+		sendScanCommand("enableButtonScan");
 	}
 
 	// Handle OnDataRead function from a scan
 	handleOnDataRead = data => {
 		//this.setState({ isLoading: true });
-		alert(JSON.stringify(data));
+		//alert(JSON.stringify(data));
 		//{Data: 'badgestuff...', Symbology: 'QR Code', Source: 'Linea-Barcode'}
+		if (this.state.registrant) {
+			this.setState(prevState => {
+				return {
+					errorMsg: "Please first go back to scan a new registrant..",
+					errorCount: prevState.errorCount + 1
+				};
+			});
+			return false;
+		} else if (!window.navigator.onLine) {
+			this.setState(prevState => {
+				return {
+					errorMsg: "Device appears to be offline..",
+					errorCount: prevState.errorCount + 1
+				};
+			});
+			return false;
+		}
 		parse(data)
 			.then(parseData => {
 				alert("DONE RETURNING PARSED DATA");
 				alert(JSON.stringify(parseData));
+				return translate(parseData);
+			})
+			.then(translateData => {
+				alert("DONE TRANSLATING DATA");
+				alert(JSON.stringify(translateData));
 			})
 			.catch(parseErr => {
+				console.log(parseErr || "00");
 				alert("ERROR FROM PARSED DATA");
-				alert(JSON.stringify(parseErr));
 			});
 	};
 
