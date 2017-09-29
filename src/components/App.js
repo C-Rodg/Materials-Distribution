@@ -61,22 +61,29 @@ class App extends Component {
 		}
 		// Parse badge data, translate, reload record, parse and set registrant
 		let scanData = "";
-		parse(data)
-			.then(parseData => {
-				scanData = parseData.ScanData;
-				return translate(parseData);
-			})
-			.then(translateData => {
-				console.log(translateData);
-				return convertTranslationToRegistrant(translateData);
-			})
-			.then(registrant => {
-				console.log(registrant);
-			})
-			.catch(parseError => {
-				//console.log(parseError.message);
-				this.displayError(parseError.message);
-			});
+		this.setState({ isLoading: true }, () => {
+			parse(data)
+				.then(parseData => {
+					scanData = parseData.ScanData;
+					return translate(parseData);
+				})
+				.then(translateData => {
+					console.log(translateData);
+					return convertTranslationToRegistrant(translateData);
+				})
+				.then(registrant => {
+					console.log(registrant);
+					registrant.ScanData = scanData;
+					this.setState({
+						registrant,
+						isConfirming: false
+					});
+				})
+				.catch(parseError => {
+					//console.log(parseError.message);
+					this.displayError(parseError.message);
+				});
+		});
 	};
 
 	// Display Error to user

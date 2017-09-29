@@ -9,8 +9,6 @@ import {
 	updateToken
 } from "./authorization";
 
-import { BASE_FIELDS, PICKUP_ITEMS } from "../config/pickupItems";
-
 // Base Registrant
 function Registrant() {
 	this.qrFirstName = "";
@@ -19,22 +17,57 @@ function Registrant() {
 	this.qrHasAttended = false;
 	this.items = [];
 }
+const baseFields = ["qrFirstName", "qrLastName", "qrRegId", "qrHasAttended"];
+const allowedGiftTrueFalseFields = ["qrGiftAmexWed", "qrGiftAmexThurs"];
+const allowedGiftValueFields = ["qrGiftShirt"];
+const alreadyGotFields = [
+	"qrPickedUpAmexWed",
+	"qrPickedUpAmexThurs",
+	"qrPickedUpShirt",
+	"qrPickedUpGiftB"
+];
+const configItems = [
+	{
+		type: "TF",
+		name: "American Express - Wednesday",
+		lcTag: "lcPickedUpAmexWed",
+		pwsTag: "qrPickedUpAmexWed",
+		allowTag: "qrGiftAmexWed"
+	},
+	{
+		type: "TF",
+		name: "American Express - Thursday",
+		lcTag: "lcPickedUpAmexThurs",
+		pwsTag: "qrPickedUpAmexThurs",
+		allowTag: "qrGiftAmexThurs"
+	},
+	{
+		type: "TF",
+		name: "T-Shirt ",
+		lcTag: "lcPickedUpShirt",
+		pwsTag: "qrPickedUpShirt",
+		allowTag: "qrGiftShirt"
+	},
+	{
+		type: "SWITCH",
+		lcTag: "lcPickedUpGiftB",
+		pwsTag: "qrPickedUpGiftB",
+		allowTag: "qrPickedUpGiftB",
+		valOne: "Oversized Truck",
+		valTwo: "Hat"
+	}
+];
 
-// Checkbox Pickup Item
 function TrueFalseItem(obj) {
-	this.hasPickedUp = false;
-	this.disabled = true;
-
 	this.type = "TF";
 	this.name = obj.name;
 	this.lcTag = obj.lcTag;
 	this.pwsTag = obj.pwsTag;
 	this.allowTag = obj.allowTag;
-	this.missingIsDisabled = obj.missingIsDisabled;
-	this.valueToEnable = obj.valueToEnable;
+	this.hasPickedUp = false;
+	this.disabled = true;
 }
 
-// Switch Pickup Item
 function SwitchItem(obj) {
 	this.type = "SWITCH";
 	this.lcTag = obj.lcTag;
@@ -43,91 +76,9 @@ function SwitchItem(obj) {
 	this.valOne = obj.valOne;
 	this.valTwo = obj.valTwo;
 	this.selected = "";
-	this.disabled = true;
+	this.disabled = false;
 	this.hasPickedUp = false;
 }
-
-// Helper to extract values from DataItems of Translation
-const getTranslationDataItem = (dataItems, id) => {
-	let searchingId = id.toUpperCase();
-	const idx = dataItems.findIndex(item => {
-		return item.Id.toUpperCase() === searchingId;
-	});
-	if (idx > -1) {
-		return dataItems[idx].Value;
-	}
-	return "";
-};
-
-// Helper to convert chaotic translation data to simplified object
-export const convertTranslationToRegistrant = translation => {
-	return new Promise((resolve, reject) => {
-		if (translation.DataItems) {
-			const registrant = new Registrant();
-
-			// Create base items
-			registrant.items = PICKUP_ITEMS.map(configItem => {
-				if (configItem.type === "TF") {
-					return new TrueFalseItem(configItem);
-				} else if (configItem.type === "SWITCH") {
-					return new SwitchItem(configItem);
-				}
-			});
-
-			const transDI = translation.DataItems;
-			// Assign base fields
-			BASE_FIELDS.forEach(field => {
-				registrant[field] = getTranslationDataItem(transDI, field);
-			});
-
-			for (let i = 0, j = registrant.items.length; i < j; i++) {
-				const item = registrant.items[i];
-				if (item.type === "TF") {
-					const val = getTranslationDataItem(transDI, item.allowTag);
-					// If value is missing and missing is disabled is false, allow field
-					if (!val && !item.missingIsDisabled) {
-						item.disabled = false;
-					} else if (item.valueToEnable.test(val)) {
-						// Test if field should be allowed
-						item.disabled = false;
-					}
-					// Test if item has already been picked up
-					const pickupVal = getTranslationDataItem(transDI, item.pwsTag);
-					if (pickupVal) {
-						item.hasPickedUp = true;
-					}
-				} else if (item.type === "SWITCH") {
-					// Test if person is allowed to pickup item
-					const val = getTranslationDataItem(transDI, item.allowTag);
-					if (!val && !item.missingIsDisabled) {
-						item.disabled = false;
-					} else if (item.valueToEnable.test(val)) {
-						item.disabled = false;
-					}
-					// Test if person has already picked up item
-					const pickupVal = getTranslationDataItem(transDI, item.pwsTag);
-					if (pickupVal) {
-						item.hasPickedUp = true;
-						item.selected = pickupVal;
-						item.disabled = true;
-					}
-				}
-			}
-
-			// TESTING - resolve for now
-			resolve(registrant);
-			if (!registrant["qrRegId"]) {
-				reject({ message: "No registrant ID associated with this record..." });
-			}
-			if (!registrant["qrHasAttended"]) {
-				reject({ message: "Registrant has not yet checked in..." });
-			}
-			resolve(registrant);
-		} else {
-			reject({ message: "Invalid translation object" });
-		}
-	});
-};
 
 // Call external service to get translation
 export const translate = async record => {
@@ -186,6 +137,81 @@ export const translate = async record => {
 		// Unknown error
 		throw new Error("Unknown fault from translation service...");
 	}
+};
+
+// Helper to convert chaotic translation data to simplified object
+export const convertTranslationToRegistrant = translation => {
+	return new Promise((resolve, reject) => {
+		if (translation.DataItems && translation.DataItems.length > 0) {
+			const registrant = new Registrant();
+
+			// Create base items
+			registrant.items = configItems.map(configItem => {
+				if (configItem.type === "TF") {
+					return new TrueFalseItem(configItem);
+				} else if (configItem.type === "SWITCH") {
+					return new SwitchItem(configItem);
+				}
+			});
+
+			// SWITCH TO LOOPING THROUGH DECLARATIONS...
+			// GETTING VALUE FROM DATAITEM...
+			// SETTING REGISTRANT VALUE...
+			// START HERE
+			translation.Declarations.forEach(decItem => {
+				if (baseFields.indexOf(item.Id) > -1) {
+				}
+			});
+
+			translation.DataItems.forEach(item => {
+				if (baseFields.indexOf(item.Id) > -1) {
+					// Mark Base Registrant props
+					registrant[item.Id] = item.Value;
+				} else if (allowedGiftTrueFalseFields.indexOf(item.Id) > -1) {
+					// Mark not 'disabled' prop for yes/no items
+					if (item.Value.toUpperCase() === "YES") {
+						const idx = registrant.items.findIndex(
+							regItem => regItem.allowTag === item.Id
+						);
+						registrant.items[idx].disabled = false;
+					}
+				} else if (allowedGiftValueFields.indexOf(item.Id) > -1) {
+					// Mark not 'disabled' and change name for value items
+					if (item.Value) {
+						const idx = registrant.items.findIndex(
+							regItem => regItem.allowTag === item.Id
+						);
+						registrant.items[idx].disabled = false;
+						registrant.items[idx].name += `${item.Value}`;
+					}
+				} else if (alreadyGotFields.indexOf(item.Id) > -1) {
+					// Mark 'hasPickedUp'
+					if (item.Value) {
+						const idx = registrant.items.findIndex(
+							regItem => regItem.pwsTag === item.Id
+						);
+						if (registrant.items[idx].type === "TF") {
+							registrant.items[idx].hasPickedUp = true;
+						} else if (registrant.items[idx].type === "SWITCH") {
+							registrant.items[idx].selected = item.Value;
+							registrant.items[idx].disabled = true;
+						}
+					}
+				}
+			});
+			// TESTING - resolve for now
+			resolve(registrant);
+			if (!registrant["qrRegId"]) {
+				reject({ message: "No registrant ID associated with this record..." });
+			}
+			if (!registrant["qrHasAttended"]) {
+				reject({ message: "Registrant has not yet checked in..." });
+			}
+			resolve(registrant);
+		} else {
+			reject({ message: "Invalid translation object" });
+		}
+	});
 };
 
 // Update local version of translation
