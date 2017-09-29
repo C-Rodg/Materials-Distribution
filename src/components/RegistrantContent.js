@@ -3,7 +3,7 @@ import React from "react";
 import "../styles/registrant-content.scss";
 
 import MaterialItem from "./MaterialItem";
-import MaterialSwitch from './MaterialSwitch'
+import MaterialSwitch from "./MaterialSwitch";
 
 const RegistrantContent = ({
 	registrant,
@@ -17,7 +17,7 @@ const RegistrantContent = ({
 			<div className="registrant-info">
 				<div className="card">
 					<div className="title">
-						{[registrant.firstName, registrant.lastName].join(" ")}
+						{[registrant.qrFirstName, registrant.qrLastName].join(" ")}
 					</div>
 					<div className="material-items">
 						{registrant.items && registrant.items.length > 0 ? (
@@ -25,23 +25,25 @@ const RegistrantContent = ({
 								if (item.type === "TF") {
 									return (
 										<MaterialItem
-											key={item.tag}
+											key={item.pwsTag}
 											checked={item.hasPickedUp}
 											disabled={item.disabled}
 											title={item.name}
-											tag={item.tag}
+											pwsTag={item.pwsTag}
 											valueChange={updateRegistrantObject}
 										/>
 									);
 								} else if (item.type === "SWITCH") {
-									return (<MaterialSwitch 
-											key={item.tag}
-											tag={item.tag} 
-											valueChange={updateRegistrantObject} 
-											valOne={item.valOne} 
-											valTwo={item.valTwo} 
-											selected={item.selected} 
-											disabled={item.disabled} />
+									return (
+										<MaterialSwitch
+											key={item.pwsTag}
+											pwsTag={item.pwsTag}
+											valueChange={updateRegistrantObject}
+											valOne={item.valOne}
+											valTwo={item.valTwo}
+											selected={item.selected}
+											disabled={item.disabled}
+										/>
 									);
 								}
 							})

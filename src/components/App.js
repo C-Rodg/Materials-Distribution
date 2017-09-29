@@ -121,90 +121,35 @@ class App extends Component {
 		ev.currentTarget.classList.add("scan-clicked");
 		sendScanCommand("startScan");
 		return false;
-		const items = [
-			{
-				type: "TF",
-				name: "American Express - Wednesday",
-				tag: "qrPickedUpAmexWed",
-				hasPickedUp: true,
-				disabled: false
-			},
-			{
-				type: "TF",
-				name: "American Express - Thursday",
-				tag: "qrPickedUpAmexThurs",
-				hasPickedUp: false,
-				disabled: false
-			},
-			{
-				type: "TF",
-				name: "T-Shirt (Medium)",
-				tag: "qrPickedUpShirt",
-				hasPickedUp: false,
-				disabled: true
-			},
-			{
-				type: "TF",
-				name: "iPad",
-				tag: "qrIpad",
-				hasPickedUp: true,
-				disabled: true
-			},
-			{
-				type: "SWITCH",
-				tag: "qrPickedUpGiftB",
-				valOne: "Oversized Truck",
-				valTwo: "Hat",
-				selected: "",
-				disabled: false
-			}
-		];
-		this.setState({ isLoading: true });
-		setTimeout(() => {
-			// this.setState(prevState => {
-			// 	return {
-			// 		errorMsg: "There was an issue loading this registrant...",
-			// 		errorCount: prevState.errorCount + 1,
-			// 		isLoading: false
-			// 	};
-			// });
-			// return false;
-			this.setState({
-				registrant: {
-					firstName: "James",
-					lastName: "Dixon-Smith",
-					items
-				},
-				isConfirming: false
-			});
-		}, 1500);
-		//this.setState({ registrant: {} });
-		// TODO: START SCAN
 	};
 
 	// Scan button released
 	handleStopScan = ev => {
 		ev.currentTarget.classList.remove("scan-clicked");
 		sendScanCommand("stopScan");
+		return false;
 	};
 
 	// Update registrant object with new values
-	handleUpdateRegistrantObject = (tag, value) => {
+	handleUpdateRegistrantObject = (pwsTag, value) => {
 		const items = this.state.registrant.items.map(item => {
-			if (item.tag === tag && item.type === "TF") {
+			if (item.pwsTag === pwsTag && item.type === "TF") {
 				return Object.assign({}, item, { hasPickedUp: value });
-			} else if (item.tag === tag && item.type === "SWITCH") {
+			} else if (item.pwsTag === pwsTag && item.type === "SWITCH") {
 				return Object.assign({}, item, { selected: value });
 			}
 			return item;
 		});
-		this.setState({
-			registrant: {
-				firstName: this.state.registrant.firstName,
-				lastName: this.state.registrant.lastName,
-				items
-			}
+		this.setState(prevState => {
+			return Object.assign({}, prevState.registrant, { items });
 		});
+		// this.setState({
+		// 	registrant: {
+		// 		firstName: this.state.registrant.qrFirstName,
+		// 		lastName: this.state.registrant.qr,
+		// 		items
+		// 	}
+		// });
 	};
 
 	// Save registrant pickup

@@ -10,7 +10,7 @@ class MaterialItem extends Component {
 	// Item row clicked
 	onItemClick = () => {
 		if (!this.props.disabled) {
-			this.props.valueChange(this.props.tag, !this.props.checked);
+			this.props.valueChange(this.props.pwsTag, !this.props.checked);
 		} else {
 			this.setState({ shake: true }, () => {
 				setTimeout(() => {
