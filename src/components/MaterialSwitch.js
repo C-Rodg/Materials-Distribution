@@ -10,7 +10,11 @@ class MaterialSwitch extends Component {
 
 	onItemClick = val => {
 		if (!this.props.disabled) {
-			this.props.valueChange(this.props.pwsTag, val);
+			if (this.props.selected === val) {
+				this.props.valueChange(this.props.pwsTag, "");
+			} else {
+				this.props.valueChange(this.props.pwsTag, val);
+			}
 		} else {
 			this.setState({ shake: true }, () => {
 				setTimeout(() => {

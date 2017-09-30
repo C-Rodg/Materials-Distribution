@@ -13,12 +13,11 @@
 	}
 
 	.header-back {
-		z-index: 25;
 		cursor: pointer;
 		user-select: none;
 		-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 		padding: 10px 8px 6px 8px;
-		z-index: 3;
+		z-index: 25;
 		i {
 			font-size: 28px;
 		}

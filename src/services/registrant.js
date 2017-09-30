@@ -32,6 +32,7 @@ function TrueFalseItem(obj) {
 	this.allowTag = obj.allowTag;
 	this.missingIsDisabled = obj.missingIsDisabled;
 	this.valueToEnable = obj.valueToEnable;
+	this.appendInputToName = obj.appendInputToName;
 }
 
 // Switch Pickup Item
@@ -45,6 +46,7 @@ function SwitchItem(obj) {
 	this.selected = "";
 	this.disabled = true;
 	this.hasPickedUp = false;
+	this.valueToEnable = obj.valueToEnable;
 }
 
 // Helper to extract values from DataItems of Translation
@@ -79,15 +81,16 @@ export const convertTranslationToRegistrant = translation => {
 			BASE_FIELDS.forEach(field => {
 				registrant[field] = getTranslationDataItem(transDI, field);
 			});
-
 			for (let i = 0, j = registrant.items.length; i < j; i++) {
 				const item = registrant.items[i];
+				// BEWARE OF REGEX BUG: ALTERNATING TEST VALUES.. use only one .test() per regex
+				const regExValue = new RegExp(item.valueToEnable, "ig");
 				if (item.type === "TF") {
 					const val = getTranslationDataItem(transDI, item.allowTag);
 					// If value is missing and missing is disabled is false, allow field
 					if (!val && !item.missingIsDisabled) {
 						item.disabled = false;
-					} else if (item.valueToEnable.test(val)) {
+					} else if (regExValue.test(val)) {
 						// Test if field should be allowed
 						item.disabled = false;
 					}
@@ -96,12 +99,17 @@ export const convertTranslationToRegistrant = translation => {
 					if (pickupVal) {
 						item.hasPickedUp = true;
 					}
+
+					// Test if you need to append input to name
+					if (item.appendInputToName && val) {
+						item.name += val;
+					}
 				} else if (item.type === "SWITCH") {
 					// Test if person is allowed to pickup item
 					const val = getTranslationDataItem(transDI, item.allowTag);
 					if (!val && !item.missingIsDisabled) {
 						item.disabled = false;
-					} else if (item.valueToEnable.test(val)) {
+					} else if (regExValue.test(val)) {
 						item.disabled = false;
 					}
 					// Test if person has already picked up item

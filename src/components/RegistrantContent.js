@@ -10,8 +10,11 @@ const RegistrantContent = ({
 	onSaveRegistrant,
 	updateRegistrantObject,
 	isConfirming,
-	isConfirmed
+	isConfirmed,
+	formTouched
 }) => {
+	console.log("registrantContent-registrant:");
+	console.log(registrant);
 	return (
 		<div className="registrant-content">
 			<div className="registrant-info">
@@ -57,7 +60,8 @@ const RegistrantContent = ({
 				className={[
 					"confirm-reg",
 					isConfirming ? "loading" : "",
-					isConfirmed ? "confirmed" : ""
+					isConfirmed ? "confirmed" : "",
+					formTouched ? "" : "form-not-touched"
 				].join(" ")}
 			>
 				<button

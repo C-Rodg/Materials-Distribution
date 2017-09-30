@@ -27,22 +27,24 @@ class App extends Component {
 			isConfirming: false,
 			isConfirmed: false,
 			errorMsg: "",
-			errorCount: 0
+			errorCount: 0,
+			formTouched: false
 		};
 	}
 
 	componentDidMount() {
+		window.OnLineaConnect = this.handleLineaConnect;
+		window.OnDataRead = this.handleOnDataRead;
+
 		startUpApplication()
 			.then(data => {
 				// Successfully started application
+				sendScanCommand("enableButtonScan");
+				console.log("scanSendCommand sent..");
 			})
 			.catch(err => {
 				alert("We ran into an issue trying to boot up the application...");
 			});
-
-		window.OnLineaConnect = this.handleLineaConnect;
-		window.OnDataRead = this.handleOnDataRead;
-		sendScanCommand("enableButtonScan");
 	}
 
 	// Handle OnDataRead function from a scan
@@ -71,16 +73,15 @@ class App extends Component {
 					console.log(translateData);
 					return convertTranslationToRegistrant(translateData);
 				})
-				.then(registrant => {
-					console.log(registrant);
-					registrant.ScanData = scanData;
+				.then(translatedReg => {
+					console.log(translatedReg);
+					translatedReg.ScanData = scanData;
 					this.setState({
-						registrant,
+						registrant: translatedReg,
 						isConfirming: false
 					});
 				})
 				.catch(parseError => {
-					//console.log(parseError.message);
 					this.displayError(parseError.message);
 				});
 		});
@@ -104,15 +105,20 @@ class App extends Component {
 
 	// Back button clicked
 	handleGoBack = () => {
-		// TODO: ALERT OF UNSAVED CHANGES
-		var confirm = confirm(
-			"Are you sure you want to leave this record?  This records data will not be saved."
+		var confirmLeave = window.confirm(
+			"Are you sure you want to leave this record?  This data associated with this record will not be saved."
 		);
-		if (confirm) {
-			this.setState({
-				registrant: null,
-				isLoading: false
-			});
+		if (confirmLeave) {
+			this.setState(
+				{
+					registrant: null,
+					formTouched: false,
+					isLoading: false
+				},
+				() => {
+					console.log(this.state.registrant);
+				}
+			);
 		}
 	};
 
@@ -127,11 +133,12 @@ class App extends Component {
 	handleStopScan = ev => {
 		ev.currentTarget.classList.remove("scan-clicked");
 		sendScanCommand("stopScan");
-		return false;
+		//return false;
 	};
 
 	// Update registrant object with new values
 	handleUpdateRegistrantObject = (pwsTag, value) => {
+		console.log(pwsTag, value);
 		const items = this.state.registrant.items.map(item => {
 			if (item.pwsTag === pwsTag && item.type === "TF") {
 				return Object.assign({}, item, { hasPickedUp: value });
@@ -140,20 +147,18 @@ class App extends Component {
 			}
 			return item;
 		});
+		console.log(items);
 		this.setState(prevState => {
-			return Object.assign({}, prevState.registrant, { items });
+			const registrant = Object.assign({}, prevState.registrant, { items });
+			return { registrant, formTouched: true };
 		});
-		// this.setState({
-		// 	registrant: {
-		// 		firstName: this.state.registrant.qrFirstName,
-		// 		lastName: this.state.registrant.qr,
-		// 		items
-		// 	}
-		// });
 	};
 
 	// Save registrant pickup
 	handleSaveRegistrant = registrant => {
+		if (!this.state.formTouched) {
+			return false;
+		}
 		// TODO: HANDLE SAVING AND SHOW THANK YOU AND RESET
 		console.log("savingggg");
 		console.log(registrant);
@@ -183,7 +188,8 @@ class App extends Component {
 					registrant: null,
 					isConfirming: false,
 					isConfirmed: false,
-					isLoading: false
+					isLoading: false,
+					formTouched: false
 				});
 			}, 2000);
 		}, 1500);
@@ -205,6 +211,7 @@ class App extends Component {
 							updateRegistrantObject={this.handleUpdateRegistrantObject}
 							isConfirming={this.state.isConfirming}
 							isConfirmed={this.state.isConfirmed}
+							formTouched={this.state.formTouched}
 						/>
 					) : (
 						<WaitingContent

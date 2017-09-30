@@ -11,7 +11,7 @@ const Header = ({ registrant, onGoBack }) => {
 					"header-back",
 					hasRegistrant ? "" : "hidden"
 				].join(" ")}
-				onClick={() => onGoBack()}
+				onClick={onGoBack}
 			>
 				<i className="material-icons">arrow_back</i>
 			</div>

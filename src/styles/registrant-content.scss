@@ -105,6 +105,12 @@
 				stroke-dashoffset: 0;
 			}
 		}
+
+		&.form-not-touched {
+			.action-btn {
+				opacity: 0.6;
+			}
+		}
 	}
 }
 
