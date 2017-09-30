@@ -45,10 +45,11 @@
 
 	&.complete.disabled {
 		.box svg {
-			border-color: $disabled-border;
-
+			//border-color: $disabled-border;
+			border-color: rgba(126, 196, 183, 1);
 			path {
-				stroke: $disabled-border;
+				//stroke: $disabled-border;
+				stroke: rgba(126, 196, 183, 1);
 			}
 		}
 	}

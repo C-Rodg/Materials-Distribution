@@ -98,6 +98,7 @@ export const convertTranslationToRegistrant = translation => {
 					const pickupVal = getTranslationDataItem(transDI, item.pwsTag);
 					if (pickupVal) {
 						item.hasPickedUp = true;
+						item.disabled = true;
 					}
 
 					// Test if you need to append input to name
@@ -122,8 +123,6 @@ export const convertTranslationToRegistrant = translation => {
 				}
 			}
 
-			// TESTING - resolve for now
-			resolve(registrant);
 			if (!registrant["qrRegId"]) {
 				reject({ message: "No registrant ID associated with this record..." });
 			}

@@ -83,6 +83,7 @@ class App extends Component {
 				})
 				.catch(parseError => {
 					this.displayError(parseError.message);
+					this.setState({ isLoading: false });
 				});
 		});
 	};
