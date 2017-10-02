@@ -13,6 +13,8 @@ import {
 import { sendScanCommand, parse } from "../services/scanning";
 import { uploadToPWS } from "../services/pws";
 
+import { soundScan, soundDeny, soundAccept } from "../services/sounds";
+
 import {
 	translate,
 	convertTranslationToRegistrant
@@ -41,27 +43,30 @@ class App extends Component {
 			.then(data => {
 				// Successfully started application
 				sendScanCommand("enableButtonScan");
-				console.log("scanSendCommand sent..");
 			})
 			.catch(err => {
 				alert("We ran into an issue trying to boot up the application...");
 			});
 	}
 
-	// Handle OnDataRead function from a scan
+	// EVENT - Handle OnDataRead function from a scan
 	handleOnDataRead = data => {
-		//this.setState({ isLoading: true });
-
 		// If not on scan page..
 		if (this.state.registrant) {
 			this.displayError("Please first go back to scan a new registrant..");
+			soundDeny();
 			return false;
 		}
 		// If we're not online
 		if (!window.navigator.onLine) {
 			this.displayError("Device appears to be offline..");
+			soundDeny();
 			return false;
 		}
+
+		// Play scan sound
+		soundScan();
+
 		// Parse badge data, translate, reload record, parse and set registrant
 		let scanData = "";
 		this.setState({ isLoading: true }, () => {
@@ -83,64 +88,15 @@ class App extends Component {
 					});
 				})
 				.catch(parseError => {
+					soundDeny();
 					this.displayError(parseError.message);
 					this.setState({ isLoading: false });
 				});
 		});
 	};
 
-	// Display Error to user
-	displayError = msg => {
-		this.setState(prevState => {
-			return {
-				errorMsg: msg,
-				errorCount: prevState.errorCount + 1
-			};
-		});
-	};
-
-	// Handle Linea device connected and enable scanning
-	handleLineaConnect = () => {
-		sendScanCommand("enableButtonScan");
-		getClientAndLeadSource().then(() => {});
-	};
-
-	// Back button clicked
-	handleGoBack = () => {
-		var confirmLeave = window.confirm(
-			"Are you sure you want to leave this record?  This data associated with this record will not be saved."
-		);
-		if (confirmLeave) {
-			this.setState(
-				{
-					registrant: null,
-					formTouched: false,
-					isLoading: false
-				},
-				() => {
-					console.log(this.state.registrant);
-				}
-			);
-		}
-	};
-
-	// Scan button pressed
-	handleStartScan = ev => {
-		ev.currentTarget.classList.add("scan-clicked");
-		sendScanCommand("startScan");
-		return false;
-	};
-
-	// Scan button released
-	handleStopScan = ev => {
-		ev.currentTarget.classList.remove("scan-clicked");
-		sendScanCommand("stopScan");
-		//return false;
-	};
-
-	// Update registrant object with new values
+	// EVENT - Update registrant object with new values
 	handleUpdateRegistrantObject = (pwsTag, value) => {
-		console.log(pwsTag, value);
 		const items = this.state.registrant.items.map(item => {
 			if (item.pwsTag === pwsTag && item.type === "TF") {
 				return Object.assign({}, item, { hasPickedUp: value });
@@ -156,66 +112,100 @@ class App extends Component {
 		});
 	};
 
-	// Save registrant pickup
+	// EVENT - save registrant pickup
 	handleSaveRegistrant = registrant => {
 		if (!this.state.formTouched) {
 			return false;
 		}
-		// TODO: HANDLE SAVING AND SHOW THANK YOU AND RESET
-		console.log("savingggg");
+		if (!window.navigator.onLine) {
+			this.displayError("Device appears to be offline..");
+			soundDeny();
+			return false;
+		}
 		console.log(registrant);
-		this.setState({ isConfirming: true }, () => {
+		this.setState({ isConfirming: true, isConfirmed: false }, () => {
 			uploadToPWS(registrant)
 				.then(uploadResponse => {
-					console.log(uploadResponse);
+					if (uploadResponse && uploadResponse.success) {
+						soundAccept();
+						this.resetRegistrant("Successfully uploaded registrant!");
+					} else {
+						soundDeny();
+						this.setState({ isConfirming: false, isConfirmed: false }, () => {
+							this.displayError("Failed to upload registrant..");
+						});
+					}
 				})
 				.catch(err => {
-					console.log(err);
-					this.displayError(err.message);
-					this.setState({ isConfirming: false });
+					soundDeny();
+					this.setState({ isConfirming: false, isConfirmed: false }, () => {
+						this.displayError(err.message);
+					});
 				});
 		});
-
-		// Fake completion of save
-		setTimeout(() => {
-			//TESTING ERROR NOTIFICATION
-			this.setState(prevState => {
-				return {
-					errorMsg: "Unable to save this registrant...",
-					errorCount: prevState.errorCount + 1,
-					isConfirmed: false,
-					isConfirming: false
-				};
-			});
-			return false;
-
-			this.setState({
-				isConfirming: false,
-				isConfirmed: true
-			});
-
-			// Reset to main view
-			setTimeout(() => {
-				this.setState({
-					registrant: null,
-					isConfirming: false,
-					isConfirmed: false,
-					isLoading: false,
-					formTouched: false
-				});
-			}, 2000);
-		}, 1500);
 	};
 
-	// Helper function for reseting registrant
-	resetRegistrant = () => {
-		this.setState({
-			registrant: null,
-			isConfirmed: false,
-			isConfirming: false,
-			isLoading: false,
-			formTouched: false
+	// HELPER - function for reseting registrant
+	resetRegistrant = msg => {
+		this.setState(
+			{
+				registrant: null,
+				isConfirmed: false,
+				isConfirming: false,
+				isLoading: false,
+				formTouched: false
+			},
+			() => {
+				if (msg) {
+					this.displayError(msg);
+				}
+			}
+		);
+	};
+
+	// HELPER - Display Error to user
+	displayError = msg => {
+		this.setState(prevState => {
+			return {
+				errorMsg: msg,
+				errorCount: prevState.errorCount + 1
+			};
 		});
+	};
+
+	// LINEA - Handle Linea device connected and enable scanning
+	handleLineaConnect = () => {
+		sendScanCommand("enableButtonScan");
+		getClientAndLeadSource().then(() => {});
+	};
+
+	// EVENT - Scan button pressed
+	handleStartScan = ev => {
+		ev.currentTarget.classList.add("scan-clicked");
+		sendScanCommand("startScan");
+		return false;
+	};
+
+	// EVENT - Scan button released
+	handleStopScan = ev => {
+		ev.currentTarget.classList.remove("scan-clicked");
+		sendScanCommand("stopScan");
+		//return false;
+	};
+
+	// EVENT - Back button clicked
+	handleGoBack = () => {
+		soundDeny();
+		var confirmLeave = window.confirm(
+			"Are you sure you want to leave this record?  This data associated with this record will not be saved."
+		);
+		if (confirmLeave) {
+			this.setState({
+				registrant: null,
+				formTouched: false,
+				isLoading: false
+			});
+		}
 	};
 
 	render() {

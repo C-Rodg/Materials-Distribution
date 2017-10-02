@@ -138,7 +138,6 @@ export const convertTranslationToRegistrant = translation => {
 
 // Call external service to get translation
 export const translate = async record => {
-	//try {
 	const seat = await getSeat();
 	const url = `${getLeadSourceObject()
 		.LeadSourceUrl}/Translate/${LeadSourceGuid.guid}/${seat}`;

@@ -8,12 +8,9 @@
 		"type": "git"
 	},
 	"scripts": {
-		"test":
-			"webpack-dev-server --config ./webpack.dev.js  --inline --hot --port 3000",
-		"watch":
-			"rimraf dist && webpack --config ./webpack.dev.js --progress --profile --colors --watch",
-		"build":
-			"rimraf dist && webpack --config ./webpack.production.js --progress --profile --colors && copy src\\config\\leadsourcerecorddefinition.xml dist\\leadsourcerecorddefinition.xml > nul && echo 'Validar Build Complete!'"
+		"test": "webpack-dev-server --config ./webpack.dev.js  --inline --hot --port 3000",
+		"watch": "rimraf dist && webpack --config ./webpack.dev.js --progress --profile --colors --watch",
+		"build": "rimraf dist && webpack --config ./webpack.production.js --progress --profile --colors && copy src\\config\\leadsourcerecorddefinition.xml dist\\leadsourcerecorddefinition.xml > nul && echo 'Validar Build Complete!'"
 	},
 	"author": "C-Rodg <rodgersbc@gmail.com>",
 	"license": "MIT",
@@ -43,6 +40,7 @@
 	},
 	"dependencies": {
 		"axios": "^0.16.2",
+		"howler": "^2.0.4",
 		"react": "^15.6.1",
 		"react-dom": "^15.6.1"
 	}

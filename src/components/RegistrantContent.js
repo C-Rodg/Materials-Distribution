@@ -13,8 +13,6 @@ const RegistrantContent = ({
 	isConfirmed,
 	formTouched
 }) => {
-	console.log("registrantContent-registrant:");
-	console.log(registrant);
 	return (
 		<div className="registrant-content">
 			<div className="registrant-info">

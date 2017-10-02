@@ -10,7 +10,7 @@ export const PICKUP_ITEMS = [
 		type: "TF",
 		name: "American Express - Wednesday",
 		lcTag: "lcPickedUpAmexWed",
-		pwsTag: "qrPickedUpAmexWed",
+		pwsTag: "qrPickedUpAmexWeds",
 		allowTag: "qrGiftAmexWed",
 		missingIsDisabled: true,
 		valueToEnable: "YES",
@@ -28,7 +28,7 @@ export const PICKUP_ITEMS = [
 	},
 	{
 		type: "TF",
-		name: "T-Shirt ",
+		name: "T-Shirt-",
 		lcTag: "lcPickedUpShirt",
 		pwsTag: "qrPickedUpShirt",
 		allowTag: "qrGiftShirt",

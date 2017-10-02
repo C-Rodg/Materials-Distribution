@@ -10,4 +10,11 @@ dist/
 # Config
 src/config/leadsourcerecorddefinition.xml
 src/config/eventGuid.js
+
+# PWS Services 
 src/services/pwsConfig.js
+
+# Sounds
+src/sounds/accept.js
+src/sounds/deny.js
+src/sounds/scan.js

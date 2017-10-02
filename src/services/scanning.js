@@ -94,9 +94,11 @@ const parseBarcode = async scannedData => {
 		const visit = {
 			ScanData: scannedId,
 			CapturedBy: client.ClientName,
-			CaptureStation: client.DeviceType
+			CaptureStation: ""
 		};
+		const d = new Date();
 		if (findResponse.data && findResponse.data.length > 0) {
+			visit.CaptureStation = `<scan>${d.toISOString()}||Returning scan</scan>`;
 			await saveVisit(visit);
 			const guid = findResponse.data[0].LeadGuid;
 			if (findResponse.data[0].DeleteDateTime !== null) {
@@ -105,9 +107,9 @@ const parseBarcode = async scannedData => {
 				await markDeleted(guid);
 				await markUndeleted(guid);
 			}
-			console.log(findResponse.data[0]);
 			return findResponse.data[0];
 		} else {
+			visit.CaptureStation = `<scan>${d.toISOString()}||New scan</scan>`;
 			const lead = {
 				ScanData: scannedId,
 				Keys: [
@@ -141,7 +143,6 @@ const parseBarcode = async scannedData => {
 			lead.LeadGuid = saveNewResponse.data.LeadGuid;
 
 			await saveVisit(visit);
-			console.log(lead);
 			return lead;
 		}
 	}
@@ -153,7 +154,7 @@ const decode_utf8 = s => {
 };
 
 // Generate error
-const generateError = message => {
+export const generateError = message => {
 	return new Promise((resolve, reject) => {
 		reject({ message });
 	});
