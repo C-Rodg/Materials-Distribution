@@ -8,4 +8,6 @@ yarn.lock
 dist/
 
 # Config
-src/config/
+src/config/leadsourcerecorddefinition.xml
+src/config/eventGuid.js
+src/services/pwsConfig.js

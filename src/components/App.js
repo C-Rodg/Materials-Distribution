@@ -11,6 +11,7 @@ import {
 } from "../services/authorization";
 
 import { sendScanCommand, parse } from "../services/scanning";
+import { uploadToPWS } from "../services/pws";
 
 import {
 	translate,
@@ -163,7 +164,17 @@ class App extends Component {
 		// TODO: HANDLE SAVING AND SHOW THANK YOU AND RESET
 		console.log("savingggg");
 		console.log(registrant);
-		this.setState({ isConfirming: true });
+		this.setState({ isConfirming: true }, () => {
+			uploadToPWS(registrant)
+				.then(uploadResponse => {
+					console.log(uploadResponse);
+				})
+				.catch(err => {
+					console.log(err);
+					this.displayError(err.message);
+					this.setState({ isConfirming: false });
+				});
+		});
 
 		// Fake completion of save
 		setTimeout(() => {
@@ -194,6 +205,17 @@ class App extends Component {
 				});
 			}, 2000);
 		}, 1500);
+	};
+
+	// Helper function for reseting registrant
+	resetRegistrant = () => {
+		this.setState({
+			registrant: null,
+			isConfirmed: false,
+			isConfirming: false,
+			isLoading: false,
+			formTouched: false
+		});
 	};
 
 	render() {
