@@ -18,3 +18,5 @@ src/services/pwsConfig.js
 src/sounds/accept.js
 src/sounds/deny.js
 src/sounds/scan.js
+
+README.md
