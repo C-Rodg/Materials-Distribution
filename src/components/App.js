@@ -76,11 +76,9 @@ class App extends Component {
 					return translate(parseData);
 				})
 				.then(translateData => {
-					console.log(translateData);
 					return convertTranslationToRegistrant(translateData);
 				})
 				.then(translatedReg => {
-					console.log(translatedReg);
 					translatedReg.ScanData = scanData;
 					this.setState({
 						registrant: translatedReg,
@@ -105,7 +103,7 @@ class App extends Component {
 			}
 			return item;
 		});
-		console.log(items);
+
 		this.setState(prevState => {
 			const registrant = Object.assign({}, prevState.registrant, { items });
 			return { registrant, formTouched: true };
@@ -122,7 +120,6 @@ class App extends Component {
 			soundDeny();
 			return false;
 		}
-		console.log(registrant);
 		this.setState({ isConfirming: true, isConfirmed: false }, () => {
 			uploadToPWS(registrant)
 				.then(uploadResponse => {

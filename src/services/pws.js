@@ -8,7 +8,8 @@ import {
 	findRecord,
 	saveVisit,
 	markUndeleted,
-	markDeleted
+	markDeleted,
+	findVisits
 } from "./registrant";
 import { getClientObject } from "./authorization";
 
@@ -35,11 +36,11 @@ export const uploadToPWS = async registrant => {
 			const client = getClientObject();
 			const d = new Date();
 			const visit = {
-				ScanData: registrant.Scan,
+				ScanData: registrant.ScanData,
 				CapturedBy: client.ClientName,
-				CaptureStation: `<save><t>${d.toISOString}</t>${registrantXml}</save>`
+				CaptureStation: `<save><t>${d.toISOString()}</t>${registrantXml}</save>`
 			};
-			await saveVisit(visit);
+			const saveVisitResponse = await saveVisit(visit);
 			const guid = recordResponse.data[0].LeadGuid;
 			if (recordResponse.data[0].DeleteDateTime !== null) {
 				await markUndeleted(guid);
@@ -47,6 +48,11 @@ export const uploadToPWS = async registrant => {
 				await markDeleted(guid);
 				await markUndeleted(guid);
 			}
+
+			// TESTING
+			//const visitResponse = await findVisits(`ScanData=${registrant.ScanData}`);
+			//visitResponse.data.forEach(v => console.log(v.CaptureStation));
+
 			return { success: true };
 		} else {
 			return generateError("Unable to save new visit..");

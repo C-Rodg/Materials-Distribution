@@ -240,3 +240,10 @@ export const markUndeleted = guid => {
 		{}
 	);
 };
+
+// Find visits
+export const findVisits = query => {
+	return axios.get(
+		`http://localhost/leadsources/${LeadSourceGuid.guid}/visits?${query}`
+	);
+};
